@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 Introducing ggprop.test, a micro package to teach about the logic of the prop test.
 
+
 ```{r, eval = F, echo = F, fig.width=12, fig.height=12}
 library(ggprop.test)
 snapshot <- ggplyr::intercept
@@ -319,3 +320,19 @@ devtools::check()
 devtools::install(pkg = ".", upgrade = "never")
 ```
 
+
+# epilogue...
+
+
+Another approach that is less concerned with being a bridge to ggplot2 layer extension...?
+
+```{r}
+geom_support <- function(...){geom_segment(data = compute_scale, ...)}
+geom_prop <- function(...){geom_point(data = compute_xmean_at_y0, label = "^", ...)}
+
+donor |>
+  ggplot() + 
+  aes(x = decision) +
+  geom_support() +
+  geom_prop()
+```
