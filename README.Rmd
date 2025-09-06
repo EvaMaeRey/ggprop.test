@@ -185,4 +185,75 @@ donor |>
 
 
 
+```{r wp_prop_poem_functions, echo = F, message = F, warning=F}
+geom_stack <- function(...){
+  qlayer(geom = qproto_update(GeomTile, aes(color = "white")), 
+         stat = qstat(compute_group_bricks), 
+         ...)
+  } 
 
+geom_stack_label <- function(...){
+  qlayer(geom = qproto_update(GeomText, aes(vjust = 0)), 
+         stat = qstat(compute_group_count), 
+         ...)
+  } 
+
+geom_support <- function(...){
+  qlayer(geom = GeomSegment, 
+         stat = qstat_panel(compute_scale), 
+         ...)
+  }
+
+geom_prop <- function(...){
+  qlayer(geom = qproto_update(GeomText, aes(size = 6, vjust = 1)),
+         stat = qstat_panel(compute_xmean_at_y0),
+         ...)
+  }
+
+
+geom_prop_label <- function(...){ 
+  qlayer(geom = qproto_update(GeomLabel, 
+                              aes(fill = from_theme(colour %||% paper), label.size = NA, vjust = 0)),
+         stat = qstat_panel(compute_xmean_at_y0_label), 
+         ...) 
+  }
+
+stamp_prop <- function(...){ 
+  qlayer(geom = qproto_update(GeomText, aes(size = 6, vjust = 1, color = from_theme(colour %||% accent))),
+         stat = qstat_panel(compute_panel_prop_asserted), 
+         ...)
+  }
+  
+  
+stamp_prop_label <- function(...){  
+  qlayer(geom = qproto_update(GeomLabel, 
+                              aes(fill = from_theme(colour %||% paper), label.size = NA, vjust = 0, color = from_theme(colour %||% accent))),
+         stat = qstat_panel(compute_panel_prop_asserted_label), 
+         ...)
+  }
+
+
+geom_normal_prop_null <- function(...){
+  qlayer(geom = qproto_update(GeomArea, aes(alpha = .2)),
+         stat = qstat_panel(compute_dnorm_prop), 
+         ...)
+  } 
+
+
+geom_normal_prop_null_sds <- function(...){
+   qlayer(geom = qproto_update(GeomSegment, aes(linetype = "dotted")),
+          stat = qstat_panel(compute_dnorm_prop_sds), 
+          ...)
+  }
+
+
+theme_chalkboard <- function(...){
+  
+theme_classic(ink = alpha("lightyellow", .7),
+           paper = "darkseagreen4", ...) + 
+    theme(geom = element_geom(accent = alpha("orange", .9)))
+  
+}
+
+
+```
