@@ -191,6 +191,7 @@ compute_dnorm_prop_sds <- function(data, scales, null = .5,
 }  
 ```
 
+# Use the compute in a rendered plot (sketch mode - where you don't actually define functions, we just have proposals commented out.
 
 
 ```{r prop_poem, echo = F, message = F, warning=F}
@@ -227,6 +228,7 @@ donor |>
   labs(title = "Is there statistical evidence that choice to between being an\nan organ donar or not differs from 50/50") 
 ```
 
+# And then define the functions...
 
 
 ```{r prop_poem_functions, echo = F, message = F, warning=F}
@@ -302,7 +304,9 @@ theme_classic(ink = alpha("lightyellow", .7),
 
 ```
 
+Done!  See the introduction for usage.
 
+---
 
 ```{r}
 knitrExtra::chunk_to_dir("prop_poem_functions")
