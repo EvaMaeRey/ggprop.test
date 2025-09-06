@@ -146,3 +146,43 @@ compute_dnorm_prop_sds <- function(data, scales, null = .5,
 
 
 ```
+
+
+
+```{r prop_poem, echo = F, message = F, warning=F}
+donor |>
+  ggplot() +
+  aes(x = decision) +
+  # 1 geom_stack
+  qlayer(geom = qproto_update(GeomTile, aes(color = "white")), 
+         stat = qstat(compute_group_bricks)) +
+  # 2 geom_stack_label() 
+  qlayer(geom = qproto_update(GeomText, aes(vjust = 0)), 
+         stat = qstat(compute_group_count)) +
+  # 3 geom_xrange, show scale, range at y is zero
+  qlayer(geom = GeomSegment, 
+         stat = qstat_panel(compute_scale)) +
+  # 4. geom_prop, show prop, i.e. balancing point
+  qlayer(geom = qproto_update(GeomText, aes(size = 6, vjust = 1)),
+         stat = qstat_panel(compute_xmean_at_y0)) + 
+  # 5. geom_prop_label, labeling prop, balancing point
+  qlayer(geom = qproto_update(GeomLabel, aes(fill = from_theme(colour %||% paper), label.size = NA, vjust = 0)),
+         stat = qstat_panel(compute_xmean_at_y0_label))  +   
+  # 6. stamp_prop, assertion, point
+  qlayer(geom = qproto_update(GeomText, aes(size = 6, vjust = 1, color = from_theme(colour %||% accent))),
+         stat = qstat_panel(compute_panel_prop_asserted)) +
+  # 7. stamp_prop_label, assertion, label
+  qlayer(geom = qproto_update(GeomLabel, aes(fill = from_theme(colour %||% paper), label.size = NA, vjust = 0, color = from_theme(colour %||% accent))),
+         stat = qstat_panel(compute_panel_prop_asserted_label)) +
+  # 8. geom_norm on prop plot
+  qlayer(geom = qproto_update(GeomArea, aes(alpha = .2)),
+         stat = qstat_panel(compute_dnorm_prop)) + 
+   # 9. geom_prop_norm w/ sd marks
+   qlayer(geom = qproto_update(GeomSegment, aes(linetype = "dotted")),
+          stat = qstat_panel(compute_dnorm_prop_sds)) +
+  labs(title = "Is there statistical evidence that choice to between being an\nan organ donar or not differs from 50/50") 
+```
+
+
+
+
