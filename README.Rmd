@@ -307,3 +307,13 @@ theme_classic(ink = alpha("lightyellow", .7),
 ```
 
 
+
+```{r}
+knitrExtra::chunk_to_dir("prop_poem_functions")
+knitrExtra::chunk_to_dir("compute_for_prop_story")
+
+
+
+```
+
+
