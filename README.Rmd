@@ -233,7 +233,7 @@ donor |>
 
 
 
-```{r wp_prop_poem_functions, echo = F, message = F, warning=F}
+```{r prop_poem_functions, echo = F, message = F, warning=F}
 geom_stack <- function(...){
   qlayer(geom = qproto_update(GeomTile, aes(color = "white")), 
          stat = qstat(compute_group_bricks), 
