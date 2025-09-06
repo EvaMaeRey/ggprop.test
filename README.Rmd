@@ -66,10 +66,6 @@ library(patchwork)
    
 
 
-
-# The repo is just a bunch of experiments... 
-
-
 ```{r compute_for_prop_story, echo = F, message=F, warning=F}
 library(statexpress)
 library(tidyverse)
@@ -130,7 +126,7 @@ compute_xmean_at_y0_label <- function(data, scales){
 
 
 
-# 6. 
+# 6. Add 'point' for asserted balancing point
 compute_panel_prop_asserted <- function(data, scales, null = .5){
   
   # stamp type layer - so ignor input data
@@ -141,6 +137,7 @@ compute_panel_prop_asserted <- function(data, scales, null = .5){
   
 }
 
+# 6. Add label for asserted balancing point
 compute_panel_prop_asserted_label <- function(data, scales, null = .5){
   
   # stamp type layer - so ignor input data
@@ -150,6 +147,7 @@ compute_panel_prop_asserted_label <- function(data, scales, null = .5){
              )
   
 }
+
 
 # Proposed layer composition
 compute_dnorm_prop <- function(data, scales, null = .5,   dist_sds = seq(-3.5, 3.5, by = .1)
@@ -191,10 +189,6 @@ compute_dnorm_prop_sds <- function(data, scales, null = .5,
            yend = 0)
 
 }  
-
-
-
-
 ```
 
 
