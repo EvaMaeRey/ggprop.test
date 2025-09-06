@@ -1,23 +1,10 @@
----
-output: github_document
----
-   
-<!-- README.md is generated from README.Rmd. Please edit that file --> 
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(      
-  collapse = TRUE,
-  warning = FALSE,  
-  comment = "#>",
-  message = F
-)        
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```
+Introducing ggprop.test, a micro package to teach the logic of the prop
+test.
 
-Introducing ggprop.test, a micro package to teach the logic of the prop test.
-
-
-```{r}
+``` r
 library(tidyverse)
 
 isi_donor_url <- "https://www.isi-stats.com/isi/data/prelim/OrganDonor.txt"
@@ -28,9 +15,18 @@ donor <- read_delim(isi_donor_url) %>%
   dplyr::mutate(decision = fct_rev(decision)) 
 
 head(donor)
+#> # A tibble: 6 × 3
+#>   Default Choice decision 
+#>   <chr>   <chr>  <fct>    
+#> 1 opt-in  donor  donor (1)
+#> 2 opt-in  donor  donor (1)
+#> 3 opt-in  donor  donor (1)
+#> 4 opt-in  donor  donor (1)
+#> 5 opt-in  donor  donor (1)
+#> 6 opt-in  donor  donor (1)
 ```
 
-```{r, eval = T, echo = T, fig.width=12, fig.height=12}
+``` r
 library(ggprop.test)
 snapshot <- ggplyr::intercept
 
@@ -71,17 +67,15 @@ library(patchwork)
    (i.e. how many standard deviations fit between .5 and .67)"
                              ) &
   ggchalkboard:::theme_blackboard(base_size = 14) 
-
-
 ```
 
----
+![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-# What's inside and how did we get here?
-   
+------------------------------------------------------------------------
 
+# What’s inside and how did we get here?
 
-```{r compute_for_prop_story, echo = T, message=F, warning=F}
+``` r
 library(tidyverse)
 
 # 1. layer stack of bricks
@@ -205,12 +199,12 @@ compute_dnorm_prop_sds <- function(data, scales, null = .5,
 }  
 ```
 
-
 # step . statexpress functions
 
-Some convenience functions from {statexpress} that we just copy, because that might not be very stable...
+Some convenience functions from {statexpress} that we just copy, because
+that might not be very stable…
 
-```{r statexpress}
+``` r
 qlayer <- function (mapping = NULL, data = NULL, geom = ggplot2::GeomPoint, stat = StatIdentity, 
     position = position_identity(), ..., na.rm = FALSE, show.legend = NA, 
     inherit.aes = TRUE) 
@@ -249,16 +243,14 @@ qproto_update <- function (`_inherit`, default_aes_update = NULL, ...)
     proto_update("protoTemp", `_inherit`, default_aes_update = default_aes_update, 
         ...)
 }
-
 ```
-
 
 # Step 1. Use the compute in a rendered plot
 
-Sketch mode - where you don't actually define functions, we just have proposals commented out.
+Sketch mode - where you don’t actually define functions, we just have
+proposals commented out.
 
-
-```{r prop_poem, echo = T, message = F, warning=F}
+``` r
 donor |>
   ggplot() +
   aes(x = decision) +
@@ -295,10 +287,11 @@ donor |>
   labs(title = "Is there statistical evidence that choice to between being an\nan organ donar or not differs from 50/50") 
 ```
 
-# And then define the functions...
+![](README_files/figure-gfm/prop_poem-1.png)<!-- -->
 
+# And then define the functions…
 
-```{r prop_poem_functions, echo = T, message = F, warning=F}
+``` r
 #' @export
 geom_stack <- function(...){
   qlayer(geom = qproto_update(ggplot2::GeomTile, ggplot2::aes(color = "white")), 
@@ -368,23 +361,19 @@ geom_normal_prop_null_sds <- function(...){
           stat = qstat_panel(compute_dnorm_prop_sds), 
           ...)
   }
-
-
-
-
 ```
 
-Done!  See the introduction for usage.
+Done! See the introduction for usage.
 
----
+------------------------------------------------------------------------
 
-```{r}
+``` r
 knitrExtra::chunk_to_dir("statexpress")
 knitrExtra::chunk_to_dir("compute_for_prop_story")
 knitrExtra::chunk_to_dir("prop_poem_functions")
 ```
 
-```{r, eval = F}
+``` r
 usethis::use_package("dplyr")
 usethis::use_package("ggplot2")
 
@@ -393,16 +382,11 @@ devtools::check(".")
 devtools::install(pkg = ".", upgrade = "never")
 ```
 
-
 <!-- # epilogue... -->
-
-
 <!-- Another approach that is less concerned with being a bridge to ggplot2 layer extension...?   -->
-
 <!-- ```{r, eval = F, echo = F} -->
 <!-- geom_support <- function(...){geom_segment(data = compute_scale, ...)} -->
 <!-- geom_prop <- function(...){geom_point(data = compute_xmean_at_y0, label = "^", ...)} -->
-
 <!-- donor |> -->
 <!--   ggplot() +  -->
 <!--   aes(x = decision) + -->
