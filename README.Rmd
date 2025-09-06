@@ -324,7 +324,7 @@ devtools::install(pkg = ".", upgrade = "never")
 # epilogue...
 
 
-Another approach that is less concerned with being a bridge to ggplot2 layer extension...?
+Another approach that is less concerned with being a bridge to ggplot2 layer extension...?  Not sure if this would work well in the 2 prop context, for example, given group-wise compute relevance...
 
 ```{r}
 geom_support <- function(...){geom_segment(data = compute_scale, ...)}
