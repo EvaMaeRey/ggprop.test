@@ -4,6 +4,16 @@ output: github_document
    
 <!-- README.md is generated from README.Rmd. Please edit that file --> 
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(      
+  collapse = TRUE,
+  warning = FALSE,  
+  comment = "#>",
+  message = F
+)        
+
+```
+
 Introducing ggprop.test, a micro package to teach about the logic of the prop test.
 
 ```{r, eval = F, echo = F, fig.width=12, fig.height=12}
@@ -50,20 +60,12 @@ library(patchwork)
 
 ```
 
+---
 
-
-# Sketch and package
+# What's inside and how did we get here?
    
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(      
-  collapse = TRUE,
-  warning = FALSE,  
-  comment = "#>",
-  message = F
-)        
 
-```
 
 # The repo is just a bunch of experiments... 
 
