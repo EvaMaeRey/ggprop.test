@@ -22,7 +22,7 @@ compute_group_count <- function(data, scales){
 
 
 # 3. layer add x span
-compute_scale <- function(data, scales){
+compute_balance <- function(data, scales){
   
   data %>% 
     dplyr::summarise(min_x = min(x),
@@ -50,49 +50,51 @@ compute_xmean_at_y0_label <- function(data, scales){
   data %>% 
     dplyr::summarise(x = mean(x),
               y = 0, 
-              label = after_stat(round(x - 1, 2))) 
+              label = after_stat(round(x, 2))) 
   
 }
 
 
 
-# 6. Add 'point' for asserted balancing point
+# 6. Add 'point' for asserted balancing point (null)
 compute_panel_prop_asserted <- function(data, scales, null = .5){
   
   # stamp type layer - so ignor input data
   data.frame(y = 0, 
-             x = null + 1,
+             x = null,
              label = "^"
              )
   
 }
 
-# 6. Add label for asserted balancing point
+# 6. Add label for asserted balancing point (null)
 compute_panel_prop_asserted_label <- function(data, scales, null = .5){
   
   # stamp type layer - so ignor input data
   data.frame(y = 0, 
-             x = null + 1,
+             x = null,
              label = round(null, 2)
              )
   
 }
 
 
-# Proposed layer composition
+
+
+# 7. normal distribution based on null and n
 compute_dnorm_prop <- function(data, scales, null = .5,   dist_sds = seq(-3.5, 3.5, by = .1)
 ){
   
-  n <- nrow(data)
+  n <- data |> dplyr::count(.by = x) |> dplyr::pull(n) |> max()
   
   sd = sqrt(null * (1 - null)/n) # sd of the null distribution
   
   q <- dist_sds * sd + null
   
-  data.frame(x = q + 1) %>%
+  data.frame(x = q) %>%
     dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) %>%
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) %>%
-    dplyr::mutate(y = .45*n*height/height_max) %>%  # This is a bit fragile...
+    dplyr::mutate(y = .55*n*height/height_max) %>%  # This is a bit fragile...
     dplyr::mutate(xend = x,
            yend = 0) %>% 
     # @teunbrand ggplot2::GeomArea$setup_data() requires a group column. Your panel computation does not preserve groups, but it should.
@@ -101,20 +103,20 @@ compute_dnorm_prop <- function(data, scales, null = .5,   dist_sds = seq(-3.5, 3
 }  
 
 
-# Proposed layer composition
+# 8. normal distribution mean and sds based on null and n
 compute_dnorm_prop_sds <- function(data, scales, null = .5,
   dist_sds = -4:4){
   
-  n <- nrow(data)
+  n <- data |> dplyr::count(.by = x) |> dplyr::pull(n) |> max()
   
   sd = sqrt(null * (1 - null)/n) # sd of the null distribution
   
   q <- dist_sds * sd + null
   
-  data.frame(x = q + 1) %>%
+  data.frame(x = q) %>%
     dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) %>%
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) %>%
-    dplyr::mutate(y = .45*n*height/height_max) %>% # This is a bit fragile...
+    dplyr::mutate(y = .55*n*height/height_max) %>% # This is a bit fragile...
     dplyr::mutate(xend = x,
            yend = 0)
 

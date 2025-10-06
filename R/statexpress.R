@@ -10,13 +10,13 @@ qlayer <- function (mapping = NULL, data = NULL, geom = ggplot2::GeomPoint, stat
 
 qstat <- function (compute_group = ggplot2::Stat$compute_group, ...) 
 {
-    ggplot2::ggproto("StatTemp", Stat, compute_group = compute_group, 
+    ggplot2::ggproto(NULL, Stat, compute_group = compute_group, 
         ...)
 }
 
 qstat_panel <- function (compute_panel, ...) 
 {
-    ggplot2::ggproto("StatTemp", Stat, compute_panel = compute_panel, 
+    ggplot2::ggproto(NULL, Stat, compute_panel = compute_panel, 
         ...)
 }
 
@@ -33,7 +33,7 @@ proto_update <- function (`_class`, `_inherit`, default_aes_update = NULL, ...)
 
 qproto_update <- function (`_inherit`, default_aes_update = NULL, ...) 
 {
-    proto_update("protoTemp", `_inherit`, default_aes_update = default_aes_update, 
+    proto_update(NULL, `_inherit`, default_aes_update = default_aes_update, 
         ...)
 }
 

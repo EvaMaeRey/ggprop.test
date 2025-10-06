@@ -1,8 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-Introducing ggprop.test, a micro package to teach the logic of the prop
-test.
+## {ggprop.test} is a micro package to teach the logic of the prop test.
 
 ``` r
 library(tidyverse)
@@ -30,7 +29,6 @@ head(donor)
 library(ggprop.test)
 snapshot <- ggplyr::intercept
 
-
 donor |>
   ggplot() + 
   aes(x = decision) +
@@ -41,10 +39,17 @@ donor |>
   geom_prop_label() + snapshot("p3") +
   stamp_prop() + 
   stamp_prop_label() + snapshot("p4") +
+  stamp_eq_norm_prop() +
   geom_normal_prop_null() + snapshot("p5") +
-  geom_normal_prop_null_sds() + snapshot("p6") -> hide
+  geom_normal_prop_null_sds() + snapshot("p6")
+```
 
+![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
+If we discuss each of the snapshot points, we could write something like
+this:
+
+``` r
 library(patchwork)
 (p1 + p2) / 
 (p3 + p4) /
@@ -69,11 +74,64 @@ library(patchwork)
   ggchalkboard:::theme_blackboard(base_size = 14) 
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ------------------------------------------------------------------------
 
 # What’s inside and how did we get here?
+
+## step 00. cloning statexpress functions
+
+Some convenience functions from {statexpress} are used, because we want
+this to be a bit more self-contained at this point, so we just clone
+them for now. statexpress is evolving and is not on CRAN.
+
+<details statexpress functions>
+
+``` r
+qlayer <- function (mapping = NULL, data = NULL, geom = ggplot2::GeomPoint, stat = StatIdentity, 
+    position = position_identity(), ..., na.rm = FALSE, show.legend = NA, 
+    inherit.aes = TRUE) 
+{
+    ggplot2::layer(data = data, mapping = mapping, geom = geom, 
+        stat = stat, position = position, show.legend = show.legend, 
+        inherit.aes = inherit.aes, params = rlang::list2(na.rm = na.rm, 
+            ...))
+}
+
+qstat <- function (compute_group = ggplot2::Stat$compute_group, ...) 
+{
+    ggplot2::ggproto(NULL, Stat, compute_group = compute_group, 
+        ...)
+}
+
+qstat_panel <- function (compute_panel, ...) 
+{
+    ggplot2::ggproto(NULL, Stat, compute_panel = compute_panel, 
+        ...)
+}
+
+
+proto_update <- function (`_class`, `_inherit`, default_aes_update = NULL, ...) 
+{
+    if (!is.null(default_aes_update)) {
+        default_aes <- aes(!!!modifyList(`_inherit`$default_aes, 
+            default_aes_update))
+    }
+    ggplot2::ggproto(`_class` = `_class`, `_inherit` = `_inherit`, 
+        default_aes = default_aes, ...)
+}
+
+qproto_update <- function (`_inherit`, default_aes_update = NULL, ...) 
+{
+    proto_update(NULL, `_inherit`, default_aes_update = default_aes_update, 
+        ...)
+}
+```
+
+</details>
+
+Now let’s see the compute…
 
 ``` r
 library(tidyverse)
@@ -100,7 +158,7 @@ compute_group_count <- function(data, scales){
 
 
 # 3. layer add x span
-compute_scale <- function(data, scales){
+compute_balance <- function(data, scales){
   
   data %>% 
     dplyr::summarise(min_x = min(x),
@@ -128,49 +186,51 @@ compute_xmean_at_y0_label <- function(data, scales){
   data %>% 
     dplyr::summarise(x = mean(x),
               y = 0, 
-              label = after_stat(round(x - 1, 2))) 
+              label = after_stat(round(x, 2))) 
   
 }
 
 
 
-# 6. Add 'point' for asserted balancing point
+# 6. Add 'point' for asserted balancing point (null)
 compute_panel_prop_asserted <- function(data, scales, null = .5){
   
   # stamp type layer - so ignor input data
   data.frame(y = 0, 
-             x = null + 1,
+             x = null,
              label = "^"
              )
   
 }
 
-# 6. Add label for asserted balancing point
+# 6. Add label for asserted balancing point (null)
 compute_panel_prop_asserted_label <- function(data, scales, null = .5){
   
   # stamp type layer - so ignor input data
   data.frame(y = 0, 
-             x = null + 1,
+             x = null,
              label = round(null, 2)
              )
   
 }
 
 
-# Proposed layer composition
+
+
+# 7. normal distribution based on null and n
 compute_dnorm_prop <- function(data, scales, null = .5,   dist_sds = seq(-3.5, 3.5, by = .1)
 ){
   
-  n <- nrow(data)
+  n <- data |> dplyr::count(.by = x) |> dplyr::pull(n) |> max()
   
   sd = sqrt(null * (1 - null)/n) # sd of the null distribution
   
   q <- dist_sds * sd + null
   
-  data.frame(x = q + 1) %>%
+  data.frame(x = q) %>%
     dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) %>%
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) %>%
-    dplyr::mutate(y = .45*n*height/height_max) %>%  # This is a bit fragile...
+    dplyr::mutate(y = .55*n*height/height_max) %>%  # This is a bit fragile...
     dplyr::mutate(xend = x,
            yend = 0) %>% 
     # @teunbrand ggplot2::GeomArea$setup_data() requires a group column. Your panel computation does not preserve groups, but it should.
@@ -179,69 +239,40 @@ compute_dnorm_prop <- function(data, scales, null = .5,   dist_sds = seq(-3.5, 3
 }  
 
 
-# Proposed layer composition
+# 8. normal distribution mean and sds based on null and n
 compute_dnorm_prop_sds <- function(data, scales, null = .5,
   dist_sds = -4:4){
   
-  n <- nrow(data)
+  n <- data |> dplyr::count(.by = x) |> dplyr::pull(n) |> max()
   
   sd = sqrt(null * (1 - null)/n) # sd of the null distribution
   
   q <- dist_sds * sd + null
   
-  data.frame(x = q + 1) %>%
+  data.frame(x = q) %>%
     dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) %>%
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) %>%
-    dplyr::mutate(y = .45*n*height/height_max) %>% # This is a bit fragile...
+    dplyr::mutate(y = .55*n*height/height_max) %>% # This is a bit fragile...
     dplyr::mutate(xend = x,
            yend = 0)
 
 }  
 ```
 
-# step . statexpress functions
-
-Some convenience functions from {statexpress} that we just copy, because
-that might not be very stable…
-
 ``` r
-qlayer <- function (mapping = NULL, data = NULL, geom = ggplot2::GeomPoint, stat = StatIdentity, 
-    position = position_identity(), ..., na.rm = FALSE, show.legend = NA, 
-    inherit.aes = TRUE) 
-{
-    ggplot2::layer(data = data, mapping = mapping, geom = geom, 
-        stat = stat, position = position, show.legend = show.legend, 
-        inherit.aes = inherit.aes, params = rlang::list2(na.rm = na.rm, 
-            ...))
-}
+#' @export
+stamp_eq_norm_prop <- function(x = I(.125),
+    y = I(.8), size = 3.5){
+  
+  annotate(
+    "text",
+    x = x,
+    y = y,
+    label = latex2exp::TeX("sd = \\sqrt{\\frac{p*(1-p)}{n}}", output = "character"),
+    parse = TRUE,
+    size = size
+  )
 
-qstat <- function (compute_group = ggplot2::Stat$compute_group, ...) 
-{
-    ggplot2::ggproto("StatTemp", Stat, compute_group = compute_group, 
-        ...)
-}
-
-qstat_panel <- function (compute_panel, ...) 
-{
-    ggplot2::ggproto("StatTemp", Stat, compute_panel = compute_panel, 
-        ...)
-}
-
-
-proto_update <- function (`_class`, `_inherit`, default_aes_update = NULL, ...) 
-{
-    if (!is.null(default_aes_update)) {
-        default_aes <- aes(!!!modifyList(`_inherit`$default_aes, 
-            default_aes_update))
-    }
-    ggplot2::ggproto(`_class` = `_class`, `_inherit` = `_inherit`, 
-        default_aes = default_aes, ...)
-}
-
-qproto_update <- function (`_inherit`, default_aes_update = NULL, ...) 
-{
-    proto_update("protoTemp", `_inherit`, default_aes_update = default_aes_update, 
-        ...)
 }
 ```
 
@@ -255,17 +286,18 @@ donor |>
   ggplot() +
   aes(x = decision) +
   # 1 geom_stack
-  qlayer(geom = qproto_update(GeomTile, aes(color = "white")), 
+  qlayer(geom = qproto_update(GeomTile, aes(color = from_theme(paper))), 
          stat = qstat(compute_group_bricks)) +
   # 2 geom_stack_label() 
   qlayer(geom = qproto_update(GeomText, aes(vjust = 0)), 
          stat = qstat(compute_group_count)) +
   # 3 geom_xrange, show scale, range at y is zero
   qlayer(geom = GeomSegment, 
-         stat = qstat_panel(compute_scale)) +
+         stat = qstat_panel(compute_balance)) +
   # 4. geom_prop, show prop, i.e. balancing point
   qlayer(geom = qproto_update(GeomText, aes(size = 6, vjust = 1)),
          stat = qstat_panel(compute_xmean_at_y0)) + 
+  scale_x_discrete(palette = scales::pal_manual(0:1)) +
   # 5. geom_prop_label, labeling prop, balancing point
   qlayer(geom = qproto_update(GeomLabel, aes(fill = from_theme(colour %||% paper), label.size = NA, vjust = 0)),
          stat = qstat_panel(compute_xmean_at_y0_label))  +   
@@ -278,6 +310,7 @@ donor |>
                                   label.size = NA, vjust = 0, 
                                   color = from_theme(colour %||% accent))),
          stat = qstat_panel(compute_panel_prop_asserted_label)) +
+  stamp_eq_norm_prop() +
   # 8. geom_norm on prop plot
   qlayer(geom = qproto_update(GeomArea, aes(alpha = .2)),
          stat = qstat_panel(compute_dnorm_prop)) + 
@@ -291,7 +324,11 @@ donor |>
 
 # And then define the functions…
 
+<details>
+
 ``` r
+
+
 #' @export
 geom_stack <- function(...){
   qlayer(geom = qproto_update(ggplot2::GeomTile, ggplot2::aes(color = "white")), 
@@ -309,15 +346,25 @@ geom_stack_label <- function(...){
 #' @export
 geom_support <- function(...){
   qlayer(geom = ggplot2::GeomSegment, 
-         stat = qstat_panel(compute_scale), 
+         stat = qstat_panel(compute_balance), 
          ...)
   }
 
+
+scale_x_prop <- function(...){ 
+
+  scale_x_discrete(palette = scales::pal_manual(0:1), ...) 
+  
+}
+
 #' @export
 geom_prop <- function(...){
+  list(
   qlayer(geom = qproto_update(ggplot2::GeomText, ggplot2::aes(size = 6, vjust = 1)),
          stat = qstat_panel(compute_xmean_at_y0),
-         ...)
+         ...),
+  scale_x_prop()
+  )
   }
 
 #' @export
@@ -363,14 +410,55 @@ geom_normal_prop_null_sds <- function(...){
   }
 ```
 
-Done! See the introduction for usage.
+</details>
+
+# Done! See below for all layers, and the introduction of packag for potential break-points along the prop test train of thought.
+
+``` r
+donor |>
+  ggplot() + 
+  aes(x = decision) +
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_support() + 
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop() + 
+  stamp_prop_label() + 
+  geom_normal_prop_null() +
+  geom_normal_prop_null_sds() + 
+  stamp_eq_norm_prop()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+``` r
+# ?prop.test
+prop.test(x = sum(donor$Choice == "donor"), # n true
+          n = length(donor$Choice), # num observations
+          p = .5) # null
+#> 
+#>  1-sample proportions test with continuity correction
+#> 
+#> data:  sum(donor$Choice == "donor") out of length(donor$Choice), null probability 0.5
+#> X-squared = 18.112, df = 1, p-value = 2.083e-05
+#> alternative hypothesis: true p is not equal to 0.5
+#> 95 percent confidence interval:
+#>  0.5917808 0.7415370
+#> sample estimates:
+#>         p 
+#> 0.6708075
+```
 
 ------------------------------------------------------------------------
+
+# Minimal Packaging
 
 ``` r
 knitrExtra::chunk_to_dir("statexpress")
 knitrExtra::chunk_to_dir("compute_for_prop_story")
 knitrExtra::chunk_to_dir("prop_poem_functions")
+knitrExtra::chunk_to_dir("stamp_eq_norm_prop")
 ```
 
 ``` r
@@ -385,7 +473,7 @@ devtools::install(pkg = ".", upgrade = "never")
 <!-- # epilogue... -->
 <!-- Another approach that is less concerned with being a bridge to ggplot2 layer extension...?   -->
 <!-- ```{r, eval = F, echo = F} -->
-<!-- geom_support <- function(...){geom_segment(data = compute_scale, ...)} -->
+<!-- geom_support <- function(...){geom_segment(data = compute_balance, ...)} -->
 <!-- geom_prop <- function(...){geom_point(data = compute_xmean_at_y0, label = "^", ...)} -->
 <!-- donor |> -->
 <!--   ggplot() +  -->

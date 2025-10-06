@@ -1,3 +1,5 @@
+
+
 #' @export
 geom_stack <- function(...){
   qlayer(geom = qproto_update(ggplot2::GeomTile, ggplot2::aes(color = "white")), 
@@ -15,15 +17,25 @@ geom_stack_label <- function(...){
 #' @export
 geom_support <- function(...){
   qlayer(geom = ggplot2::GeomSegment, 
-         stat = qstat_panel(compute_scale), 
+         stat = qstat_panel(compute_balance), 
          ...)
   }
 
+
+scale_x_prop <- function(...){ 
+
+  scale_x_discrete(palette = scales::pal_manual(0:1), ...) 
+  
+}
+
 #' @export
 geom_prop <- function(...){
+  list(
   qlayer(geom = qproto_update(ggplot2::GeomText, ggplot2::aes(size = 6, vjust = 1)),
          stat = qstat_panel(compute_xmean_at_y0),
-         ...)
+         ...),
+  scale_x_prop()
+  )
   }
 
 #' @export
