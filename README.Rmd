@@ -224,7 +224,7 @@ compute_panel_prop_asserted_label <- function(data, scales, null = .5){
 compute_dnorm_prop <- function(data, scales, null = .5,   dist_sds = seq(-3.5, 3.5, by = .1)
 ){
   
-  n <- data |> dplyr::count(.by = x) |> dplyr::pull(n) |> max()
+  n <- data |> nrow()
   
   sd = sqrt(null * (1 - null)/n) # sd of the null distribution
   
@@ -246,7 +246,7 @@ compute_dnorm_prop <- function(data, scales, null = .5,   dist_sds = seq(-3.5, 3
 compute_dnorm_prop_sds <- function(data, scales, null = .5,
   dist_sds = -4:4){
   
-  n <- data |> dplyr::count(.by = x) |> dplyr::pull(n) |> max()
+  n <- data |> nrow()
   
   sd = sqrt(null * (1 - null)/n) # sd of the null distribution
   
