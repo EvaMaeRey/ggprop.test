@@ -86,6 +86,8 @@ compute_dnorm_prop <- function(data, scales, null = .5,   dist_sds = seq(-3.5, 3
 ){
   
   n <- data |> nrow()
+  n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
+
   
   sd = sqrt(null * (1 - null)/n) # sd of the null distribution
   
@@ -94,7 +96,7 @@ compute_dnorm_prop <- function(data, scales, null = .5,   dist_sds = seq(-3.5, 3
   data.frame(x = q) %>%
     dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) %>%
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) %>%
-    dplyr::mutate(y = .55*n*height/height_max) %>%  # This is a bit fragile...
+    dplyr::mutate(y = .55*n_max*height/height_max) %>%  # This is a bit fragile...
     dplyr::mutate(xend = x,
            yend = 0) %>% 
     # @teunbrand ggplot2::GeomArea$setup_data() requires a group column. Your panel computation does not preserve groups, but it should.
@@ -109,6 +111,8 @@ compute_dnorm_prop_sds <- function(data, scales, null = .5,
   
   n <- data |> nrow()
   
+  n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
+  
   sd = sqrt(null * (1 - null)/n) # sd of the null distribution
   
   q <- dist_sds * sd + null
@@ -116,7 +120,7 @@ compute_dnorm_prop_sds <- function(data, scales, null = .5,
   data.frame(x = q) %>%
     dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) %>%
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) %>%
-    dplyr::mutate(y = .55*n*height/height_max) %>% # This is a bit fragile...
+    dplyr::mutate(y = .55*n_max*height/height_max) %>% # This is a bit fragile...
     dplyr::mutate(xend = x,
            yend = 0)
 
