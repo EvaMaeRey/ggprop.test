@@ -57,9 +57,9 @@ compute_xmean_at_y0_label <- function(data, scales){
 
 
 # 6. Add 'point' for asserted balancing point (null)
-compute_panel_prop_asserted <- function(data, scales, null = .5){
+compute_panel_prop_asserted <- function(data, scales, value = .5){
   
-  # stamp type layer - so ignor input data
+  # stamp type layer - so ignore input data
   data.frame(y = 0, 
              x = null,
              label = "^"
@@ -68,7 +68,7 @@ compute_panel_prop_asserted <- function(data, scales, null = .5){
 }
 
 # 6. Add label for asserted balancing point (null)
-compute_panel_prop_asserted_label <- function(data, scales, null = .5){
+compute_panel_prop_asserted_label <- function(data, scales, value = .5){
   
   # stamp type layer - so ignor input data
   data.frame(y = 0, 
@@ -82,7 +82,7 @@ compute_panel_prop_asserted_label <- function(data, scales, null = .5){
 
 
 # 7. normal distribution based on null and n
-compute_dnorm_prop <- function(data, scales, null = .5,   dist_sds = seq(-3.5, 3.5, by = .1)
+compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5, by = .1)
 ){
   
   n <- data |> nrow()

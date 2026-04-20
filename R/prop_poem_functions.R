@@ -53,7 +53,10 @@ stamp_prop <- function(...){
                                            vjust = 1, 
                                            color = ggplot2::from_theme(colour %||% accent))),
          stat = qstat_panel(compute_panel_prop_asserted), 
-         ...)
+         data = data.frame(x = 1), 
+         inherit.aes = FALSE,
+         ...
+         )
   }
   
 #' @export  
@@ -63,7 +66,10 @@ stamp_prop_label <- function(...){
                                   label.size = NA, vjust = 0, 
                                   color = ggplot2::from_theme(colour %||% accent))),
          stat = qstat_panel(compute_panel_prop_asserted_label), 
-         ...)
+         data = data.frame(x = 1), 
+         inherit.aes = FALSE,
+         ...
+         )
   }
 
 #' @export
@@ -79,6 +85,21 @@ geom_normal_prop_null_sds <- function(...){
           stat = qstat_panel(compute_dnorm_prop_sds), 
           ...)
   }
+
+ 
+
+
+# #' @export
+# geom_diff <- function(...){
+#    qlayer(geom = qproto_update(ggplot2::GeomSegment, ggplot2::aes(linetype = "dotted")),
+#           stat = qstat_panel(compute_dnorm_prop_sds), 
+#           ...)
+#   
+#      qlayer(geom = qproto_update(ggplot2::GeomSegment, ggplot2::aes(linetype = "dotted")),
+#           stat = qstat_panel(compute_dnorm_prop_sds), 
+#           ...)
+#   
+#   }
 
 
 

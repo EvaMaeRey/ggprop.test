@@ -1,35 +1,224 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## {ggprop.test} is a micro package to teach the logic of the prop test.
+## {ggprop.test} is a micro *package* to teach the logic of the prop test.
+
+Telling a story with data is a popular idea.
+
+> The book is meant as a guide to making visualizations that accurately
+> reflect the data, *tell a story*, and look professional. -
+> [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/),
+> Clause Wilke…
+
+> Companies exist that put this idea front and center to their missions:
+> [1. Story Telling with Data](https://www.storytellingwithdata.com/),
+> [2. Building Stories with Data](https://www.cararthompson.com/).
+
+But the focus for ‘data storytelling’ tends to be on reaching broad
+audiences, communicating statistical summaries, and compelling complete
+plots. (See also [‘the *glamour* of
+graphics’](https://www.youtube.com/watch?v=h5cTacaWE6I)).
+
+{ggprop.test}, in contrast, is an attempt to capture the *statistical
+stories* that are told in *classrooms* all the time.
+
+{ggprop.test} exists to allow instructors and students to engage with
+the logic of statistical tests and techniques, often presented
+step-by-step on a chalkboard in a class room, but programmatically!
+
+Which we don’t aim to replace the chalkboard/paper experience but
+compliment it - indeed it’s the inspiration for this project. See [New
+approaches to light-weight ‘geom’ (layer) extension]()
+<https://evamaerey.github.io/mytidytuesday/2024-10-29-asa-cowy-fall-2024/asa-cowy-fall-2024.html#22>)
+
+This might mean that instead of using the logic a handful of times for a
+handful of examples, student and instructors might walk through this
+logic *many* times - becoming not just familiar with the logic, but
+fluent.
+
+Under the hood, ggplot2 extension is used so that individual concepts
+can be delivered in both a semantic and visual way.
+
+{ggprop.test} is an MVP (a minimial viable product/package). This type
+of package identifies what is required to deliver functionality, but
+stops short of putting in all the work that might be required to get a
+package to CRAN and doesn’t adheare to all of [packaging best
+practices](https://r-pkgs.org/), noting that student feedback and might
+lead to pretty dramatic changes and rewrites.
+
+Let’s have a look at the MVP structure, which does have a lot in common
+with full-blown CRAN-ready packages:
+<https://github.com/EvaMaeRey/ggprop.test>
+
+``` r
+fs::dir_tree()
+#> .
+#> ├── DESCRIPTION
+#> ├── NAMESPACE
+#> ├── R
+#> │   ├── compute_for_prop_story.R
+#> │   ├── prop_poem_functions.R
+#> │   ├── stamp_eq_norm_prop.R
+#> │   └── statexpress.R
+#> ├── README.Rmd
+#> ├── README.md
+#> ├── README_files
+#> │   └── figure-gfm
+#> │       ├── prop_poem-1.png
+#> │       ├── unnamed-chunk-10-1.png
+#> │       ├── unnamed-chunk-10-2.png
+#> │       ├── unnamed-chunk-10-3.png
+#> │       ├── unnamed-chunk-10-4.png
+#> │       ├── unnamed-chunk-10-5.png
+#> │       ├── unnamed-chunk-10-6.png
+#> │       ├── unnamed-chunk-10-7.png
+#> │       ├── unnamed-chunk-10-8.png
+#> │       ├── unnamed-chunk-11-1.png
+#> │       ├── unnamed-chunk-11-2.png
+#> │       ├── unnamed-chunk-11-3.png
+#> │       ├── unnamed-chunk-11-4.png
+#> │       ├── unnamed-chunk-11-5.png
+#> │       ├── unnamed-chunk-11-6.png
+#> │       ├── unnamed-chunk-11-7.png
+#> │       ├── unnamed-chunk-11-8.png
+#> │       ├── unnamed-chunk-3-1.png
+#> │       ├── unnamed-chunk-4-1.png
+#> │       ├── unnamed-chunk-4-2.png
+#> │       ├── unnamed-chunk-5-1.png
+#> │       ├── unnamed-chunk-5-2.png
+#> │       ├── unnamed-chunk-6-1.png
+#> │       ├── unnamed-chunk-6-2.png
+#> │       ├── unnamed-chunk-7-1.png
+#> │       ├── unnamed-chunk-7-2.png
+#> │       ├── unnamed-chunk-8-1.png
+#> │       ├── unnamed-chunk-8-2.png
+#> │       ├── unnamed-chunk-8-3.png
+#> │       ├── unnamed-chunk-8-4.png
+#> │       ├── unnamed-chunk-8-5.png
+#> │       ├── unnamed-chunk-8-6.png
+#> │       ├── unnamed-chunk-8-7.png
+#> │       ├── unnamed-chunk-8-8.png
+#> │       ├── unnamed-chunk-9-1.png
+#> │       ├── unnamed-chunk-9-2.png
+#> │       ├── unnamed-chunk-9-3.png
+#> │       ├── unnamed-chunk-9-4.png
+#> │       ├── unnamed-chunk-9-5.png
+#> │       ├── unnamed-chunk-9-6.png
+#> │       ├── unnamed-chunk-9-7.png
+#> │       └── unnamed-chunk-9-8.png
+#> ├── data
+#> │   ├── dolphin_data.rda
+#> │   └── donor_data.rda
+#> ├── ggprop.test.Rproj
+#> └── man
+```
+
+------------------------------------------------------------------------
+
+# Student start!
+
+> Motivating question: For survey of 161 individuals on willingness to
+> serve as organ doners in the case of an accident, is there evidence
+> that responses rate differs from a 50/50 split, when 53 individuals
+> respond ‘no’ and 108 individuals respond ‘yes’?
+
+> Does the sample provide statistical evidence that there isn’t a 50-50
+> split in preference for donation? Or indiffernece (like people are
+> just answering randomly because they are not paying attention or )
+
+{ggprop.test} can be installed as follows…
+
+``` r
+library(remotes)
+install_github("EvaMaeRey/ggprop.test")
+```
+
+``` r
+library(tidyverse)
+
+library(ggprop.test)
+
+
+donor_data |> 
+  pull(decision) |> 
+  table()
+#> 
+#>   not (0) donor (1) 
+#>        53       108
+```
 
 ``` r
 library(tidyverse)
 
 isi_donor_url <- "https://www.isi-stats.com/isi/data/prelim/OrganDonor.txt"
 
-donor <- read_delim(isi_donor_url) %>%
-  select(Default, Choice) %>% 
+donor_data <- read_delim(isi_donor_url) %>%
+  select(Choice) %>% 
   dplyr::mutate(decision = ifelse(Choice == "donor", "donor (1)", "not (0)")) %>% 
-  dplyr::mutate(decision = fct_rev(decision)) 
+  dplyr::mutate(decision = fct_rev(decision)) |> 
+  sample_frac()
 
-head(donor)
-#> # A tibble: 6 × 3
-#>   Default Choice decision 
-#>   <chr>   <chr>  <fct>    
-#> 1 opt-in  donor  donor (1)
-#> 2 opt-in  donor  donor (1)
-#> 3 opt-in  donor  donor (1)
-#> 4 opt-in  donor  donor (1)
-#> 5 opt-in  donor  donor (1)
-#> 6 opt-in  donor  donor (1)
+head(donor_data)
+#> # A tibble: 6 × 2
+#>   Choice decision 
+#>   <chr>  <fct>    
+#> 1 not    not (0)  
+#> 2 donor  donor (1)
+#> 3 not    not (0)  
+#> 4 donor  donor (1)
+#> 5 donor  donor (1)
+#> 6 donor  donor (1)
+
+dolphin_data <- tribble(~observed,
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Not Correct (0)",
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Correct (1)",
+                         "Correct (1)") |> 
+  dplyr::mutate(observed = fct_rev(observed))
+```
+
+``` r
+usethis::use_data(dolphin_data, overwrite = T)
+usethis::use_data(donor_data, overwrite = T)
 ```
 
 ``` r
 library(ggprop.test)
 snapshot <- ggplyr::intercept
 
-donor |>
+
+# Does the sample provide statistical evidence that there isn't a 50-50 split in preference for donation?
+# or indiffernece (like people are just answering randomly because they are not paying attention or )
+donor_data |> 
+  pull(decision) |> 
+  table()
+#> 
+#>   not (0) donor (1) 
+#>        53       108
+
+
+dolphin_data |> 
+  pull(observed) |> 
+  table()
+#> 
+#> Not Correct (0)     Correct (1) 
+#>               1              15
+```
+
+``` r
+donor_data |>
   ggplot() + 
   aes(x = decision) +
   geom_stack() + 
@@ -44,7 +233,30 @@ donor |>
   geom_normal_prop_null_sds() + snapshot("p6")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+
+
+# Doris and buzz cooperate to get fish
+dolphin_data |>
+  ggplot() + 
+  aes(x = observed) +
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_support() + 
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop() + 
+  stamp_prop_label() + 
+  stamp_eq_norm_prop() +
+  geom_normal_prop_null() + 
+  geom_normal_prop_null_sds() + 
+  labs(title = "Are Dolphins Buzz and Doris Cooperating?") + 
+  labs(caption = "Wait! Are the 'validity conditions' met here to use the normal approximation?")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
 
 If we discuss each of the snapshot points, we could write something like
 this:
@@ -71,10 +283,10 @@ library(patchwork)
 6. Calc z-score - where does observed prop fit into NULL distributions 
    (i.e. how many standard deviations fit between .5 and .67)"
                              ) &
-  ggchalkboard:::theme_blackboard(base_size = 14) 
+  ggchalkboard:::theme_chalkboard(base_size = 14) 
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 ------------------------------------------------------------------------
 
@@ -86,7 +298,7 @@ Some convenience functions from {statexpress} are used, because we want
 this to be a bit more self-contained at this point, so we just clone
 them for now. statexpress is evolving and is not on CRAN.
 
-<details statexpress functions>
+<details>
 
 ``` r
 qlayer <- function (mapping = NULL, data = NULL, geom = ggplot2::GeomPoint, stat = StatIdentity, 
@@ -128,8 +340,6 @@ qproto_update <- function (`_inherit`, default_aes_update = NULL, ...)
         ...)
 }
 ```
-
-</details>
 
 Now let’s see the compute…
 
@@ -193,9 +403,9 @@ compute_xmean_at_y0_label <- function(data, scales){
 
 
 # 6. Add 'point' for asserted balancing point (null)
-compute_panel_prop_asserted <- function(data, scales, null = .5){
+compute_panel_prop_asserted <- function(data, scales, value = .5){
   
-  # stamp type layer - so ignor input data
+  # stamp type layer - so ignore input data
   data.frame(y = 0, 
              x = null,
              label = "^"
@@ -204,7 +414,7 @@ compute_panel_prop_asserted <- function(data, scales, null = .5){
 }
 
 # 6. Add label for asserted balancing point (null)
-compute_panel_prop_asserted_label <- function(data, scales, null = .5){
+compute_panel_prop_asserted_label <- function(data, scales, value = .5){
   
   # stamp type layer - so ignor input data
   data.frame(y = 0, 
@@ -218,7 +428,7 @@ compute_panel_prop_asserted_label <- function(data, scales, null = .5){
 
 
 # 7. normal distribution based on null and n
-compute_dnorm_prop <- function(data, scales, null = .5,   dist_sds = seq(-3.5, 3.5, by = .1)
+compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5, by = .1)
 ){
   
   n <- data |> nrow()
@@ -264,17 +474,22 @@ compute_dnorm_prop_sds <- function(data, scales, null = .5,
 ```
 
 ``` r
+GeomTextBig <- ggproto("GeomTextBig", GeomText,
+                       default_aes = modifyList(GeomText$default_aes,
+                                                aes(size = from_theme(fontsize))
+                                                ))
+
+
 #' @export
 stamp_eq_norm_prop <- function(x = I(.125),
-    y = I(.8), size = 3.5){
+    y = I(.8), ...){
   
   annotate(
     "text",
     x = x,
     y = y,
     label = latex2exp::TeX("sd = \\sqrt{\\frac{p*(1-p)}{n}}", output = "character"),
-    parse = TRUE,
-    size = size
+    parse = TRUE, ...
   )
 
 }
@@ -286,7 +501,7 @@ Sketch mode - where you don’t actually define functions, we just have
 proposals commented out.
 
 ``` r
-donor |>
+donor_data |>
   ggplot() +
   aes(x = decision) +
   # 1 geom_stack
@@ -307,13 +522,13 @@ donor |>
          stat = qstat_panel(compute_xmean_at_y0_label))  +   
   # 6. stamp_prop, assertion, point
   qlayer(geom = qproto_update(GeomText, aes(size = 6, vjust = 1, color = from_theme(colour %||% accent))),
-         stat = qstat_panel(compute_panel_prop_asserted)) +
+         stat = qstat_panel(compute_panel_prop_asserted), data = data.frame(x = 1), inherit.aes = F) +
   # 7. stamp_prop_label, assertion, label
   qlayer(geom = qproto_update(GeomLabel, 
                               aes(fill = from_theme(colour %||% paper), 
                                   label.size = NA, vjust = 0, 
                                   color = from_theme(colour %||% accent))),
-         stat = qstat_panel(compute_panel_prop_asserted_label)) +
+         stat = qstat_panel(compute_panel_prop_asserted_label), data = data.frame(x = 1), inherit.aes = F) +
   stamp_eq_norm_prop() +
   # 8. geom_norm on prop plot
   qlayer(geom = qproto_update(GeomArea, aes(alpha = .2)),
@@ -386,7 +601,10 @@ stamp_prop <- function(...){
                                            vjust = 1, 
                                            color = ggplot2::from_theme(colour %||% accent))),
          stat = qstat_panel(compute_panel_prop_asserted), 
-         ...)
+         data = data.frame(x = 1), 
+         inherit.aes = FALSE,
+         ...
+         )
   }
   
 #' @export  
@@ -396,7 +614,10 @@ stamp_prop_label <- function(...){
                                   label.size = NA, vjust = 0, 
                                   color = ggplot2::from_theme(colour %||% accent))),
          stat = qstat_panel(compute_panel_prop_asserted_label), 
-         ...)
+         data = data.frame(x = 1), 
+         inherit.aes = FALSE,
+         ...
+         )
   }
 
 #' @export
@@ -412,6 +633,21 @@ geom_normal_prop_null_sds <- function(...){
           stat = qstat_panel(compute_dnorm_prop_sds), 
           ...)
   }
+
+ 
+
+
+# #' @export
+# geom_diff <- function(...){
+#    qlayer(geom = qproto_update(ggplot2::GeomSegment, ggplot2::aes(linetype = "dotted")),
+#           stat = qstat_panel(compute_dnorm_prop_sds), 
+#           ...)
+#   
+#      qlayer(geom = qproto_update(ggplot2::GeomSegment, ggplot2::aes(linetype = "dotted")),
+#           stat = qstat_panel(compute_dnorm_prop_sds), 
+#           ...)
+#   
+#   }
 ```
 
 </details>
@@ -419,7 +655,44 @@ geom_normal_prop_null_sds <- function(...){
 # Done! See below for all layers, and the introduction of packag for potential break-points along the prop test train of thought.
 
 ``` r
-donor |>
+library(ggplot2)
+library(ggprop.test)
+library(S7)
+
+theme_set(
+  ggchalkboard:::theme_blackboard(
+    base_size = 12))
+
+
+layers_remove <- function(i = NULL) {
+
+  structure(
+    list(index_wipe = i), 
+    class = "layers_remove"
+    )
+
+}
+
+
+method(update_ggplot, list(new_S3_class("layers_remove"), class_ggplot)) <- 
+  function(object, plot, ...) {
+    
+  if(is.null(object$index_wipe)){
+   
+    plot$layers <- list()
+     
+  }else{
+    
+    plot$layers[object$index_wipe] <- NULL
+
+  }
+  
+  plot
+    
+  }
+
+
+donor_data |>
   ggplot() + 
   aes(x = decision) +
   geom_stack() + 
@@ -434,17 +707,19 @@ donor |>
   stamp_eq_norm_prop()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+</details>
 
 ``` r
 # ?prop.test
-prop.test(x = sum(donor$Choice == "donor"), # n true
-          n = length(donor$Choice), # num observations
+prop.test(x = sum(donor_data$Choice == "donor"), # n true
+          n = length(donor_data$Choice), # num observations
           p = .5) # null
 #> 
 #>  1-sample proportions test with continuity correction
 #> 
-#> data:  sum(donor$Choice == "donor") out of length(donor$Choice), null probability 0.5
+#> data:  sum(donor_data$Choice == "donor") out of length(donor_data$Choice), null probability 0.5
 #> X-squared = 18.112, df = 1, p-value = 2.083e-05
 #> alternative hypothesis: true p is not equal to 0.5
 #> 95 percent confidence interval:
@@ -453,6 +728,100 @@ prop.test(x = sum(donor$Choice == "donor"), # n true
 #>         p 
 #> 0.6708075
 ```
+
+------------------------------------------------------------------------
+
+``` r
+
+plausible_based_on_null <- function(data, var, prob = .5){
+  
+  observed <- data |> 
+    pull({{var}})
+  
+  generated <- levels(observed) |>  # take two 
+    sample(size = nrow(data), replace = T) |> 
+    # restore category ordering
+    factor(levels = levels(observed))
+  
+  data |> 
+    mutate(plausible = generated)
+  
+}
+```
+
+``` r
+plausible_based_on_null(donor_data, var = decision) 
+#> # A tibble: 161 × 3
+#>    Choice decision  plausible
+#>    <chr>  <fct>     <fct>    
+#>  1 not    not (0)   not (0)  
+#>  2 donor  donor (1) donor (1)
+#>  3 not    not (0)   donor (1)
+#>  4 donor  donor (1) donor (1)
+#>  5 donor  donor (1) donor (1)
+#>  6 donor  donor (1) donor (1)
+#>  7 donor  donor (1) not (0)  
+#>  8 donor  donor (1) donor (1)
+#>  9 not    not (0)   donor (1)
+#> 10 donor  donor (1) donor (1)
+#> # ℹ 151 more rows
+
+donor_data |> 
+  plausible_based_on_null(decision) |>
+  ggplot() + 
+  aes(x = plausible) + 
+  labs(x = "plausible balance if null (50-50) is true") +
+  geom_stack() + 
+  geom_prop() + 
+  geom_prop_label() + 
+  geom_support() + 
+  stamp_prop(value = .67)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+
+last_plot() + plausible_based_on_null(donor_data, var = decision) 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
+
+``` r
+last_plot() + plausible_based_on_null(donor_data, var = decision) 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-3.png)<!-- -->
+
+``` r
+last_plot() + plausible_based_on_null(donor_data, var = decision) 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-4.png)<!-- -->
+
+``` r
+last_plot() + plausible_based_on_null(donor_data, var = decision) 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-5.png)<!-- -->
+
+``` r
+last_plot() + plausible_based_on_null(donor_data, var = decision) 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-6.png)<!-- -->
+
+``` r
+last_plot() + plausible_based_on_null(donor_data, var = decision) 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-7.png)<!-- -->
+
+``` r
+last_plot() + plausible_based_on_null(donor_data, var = decision) 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-8.png)<!-- -->
 
 ------------------------------------------------------------------------
 
@@ -475,13 +844,23 @@ devtools::install(pkg = ".", upgrade = "never")
 ```
 
 <!-- # epilogue... -->
+
 <!-- Another approach that is less concerned with being a bridge to ggplot2 layer extension...?   -->
+
 <!-- ```{r, eval = F, echo = F} -->
+
 <!-- geom_support <- function(...){geom_segment(data = compute_balance, ...)} -->
+
 <!-- geom_prop <- function(...){geom_point(data = compute_xmean_at_y0, label = "^", ...)} -->
+
 <!-- donor |> -->
+
 <!--   ggplot() +  -->
+
 <!--   aes(x = decision) + -->
+
 <!--   geom_support() + -->
+
 <!--   geom_prop() -->
+
 <!-- ``` -->
