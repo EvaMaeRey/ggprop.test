@@ -1,7 +1,51 @@
+ggprop.test
+================
+
+- [Where we are headed…](#where-we-are-headed)
+- [{ggprop.test} is a micro *package* that translates the visual logic
+  of the prop test to
+  ggplot2.](#ggproptest-is-a-micro-package-that-translates-the-visual-logic-of-the-prop-test-to-ggplot2)
+  - [Motivation for ggproptest and
+    friends.](#motivation-for-ggproptest-and-friends)
+  - [An introductiong to packaging requirements via
+    ggprop.test](#an-introductiong-to-packaging-requirements-via-ggproptest)
+- [Back to the prop test!! Yay!!](#back-to-the-prop-test-yay)
+- [data and scenarios](#data-and-scenarios)
+- [How many trials where we are drawing from NULL, before we see
+  something as far from .5 as
+  .67?](#how-many-trials-where-we-are-drawing-from-null-before-we-see-something-as-far-from-5-as-67)
+- [Example \# 2](#example--2)
+- [Visualizing raw data](#visualizing-raw-data)
+  - [cloning statexpress functions](#cloning-statexpress-functions)
+  - [And then define the functions…](#and-then-define-the-functions)
+- [Calculating Prop, and allowing Null to be
+  visualized](#calculating-prop-and-allowing-null-to-be-visualized)
+  - [What’s observed under Null
+    hypothesis?](#whats-observed-under-null-hypothesis)
+- [Distributions for the Null…](#distributions-for-the-null)
+- [Done! See below for all layers, and the introduction of packag for
+  potential break-points along the prop test train of
+  thought.](#done-see-below-for-all-layers-and-the-introduction-of-packag-for-potential-break-points-along-the-prop-test-train-of-thought)
+- [Minimal Packaging](#minimal-packaging)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## {ggprop.test} is a micro *package* to teach the logic of the prop test.
+``` r
+library(ggprop.test)
+```
+
+## Where we are headed…
+
+![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+If we discuss each of the snapshot points, we could write something like
+this:
+
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+## {ggprop.test} is a micro *package* that translates the visual logic of the prop test to ggplot2.
+
+### Motivation for ggproptest and friends.
 
 Telling a story with data is a popular idea.
 
@@ -10,17 +54,22 @@ Telling a story with data is a popular idea.
 > [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/),
 > Clause Wilke…
 
-> Companies exist that put this idea front and center to their missions:
-> [1. Story Telling with Data](https://www.storytellingwithdata.com/),
-> [2. Building Stories with Data](https://www.cararthompson.com/).
+> Companies like [Story Telling with
+> Data](https://www.storytellingwithdata.com/) and [Building Stories
+> with Data](https://www.cararthompson.com/) put this idea front and
+> center to their missions.
 
-But the focus for ‘data storytelling’ tends to be on reaching broad
-audiences, communicating statistical summaries, and compelling complete
-plots. (See also [‘the *glamour* of
-graphics’](https://www.youtube.com/watch?v=h5cTacaWE6I)).
+> I’m focusing on visual design and storytelling within our
+> organization. Will Chase’s introduction for [‘the *glamour* of
+> graphics’ talk 2020](https://www.youtube.com/watch?v=h5cTacaWE6I)
 
-{ggprop.test}, in contrast, is an attempt to capture the *statistical
-stories* that are told in *classrooms* all the time.
+However, the ‘data storytelling’ tends to be focused on reaching broad
+audiences, communicating statistical summaries (rather than
+trains-of-thought), and compelling complete plots.
+
+{ggprop.test} and friends, in contrast, are an attempt to capture the
+*statistical stories* that are told in *classrooms* all the time
+visually, but don’t yet have translations to code.
 
 {ggprop.test} exists to allow instructors and students to engage with
 the logic of statistical tests and techniques, often presented
@@ -39,16 +88,20 @@ fluent.
 Under the hood, ggplot2 extension is used so that individual concepts
 can be delivered in both a semantic and visual way.
 
-{ggprop.test} is an MVP (a minimial viable product/package). This type
-of package identifies what is required to deliver functionality, but
-stops short of putting in all the work that might be required to get a
-package to CRAN and doesn’t adheare to all of [packaging best
+### An introductiong to packaging requirements via ggprop.test
+
+{ggprop.test} is an ‘mvp’ (a minimal viable product/package). This type
+of package identifies the minimum required to deliver functionality, but
+stops short of putting in additional work that might be required to get
+a package to CRAN and doesn’t adhere to all of [packaging best
 practices](https://r-pkgs.org/), noting that student feedback and might
 lead to pretty dramatic changes and rewrites.
 
-Let’s have a look at the MVP structure, which does have a lot in common
-with full-blown CRAN-ready packages:
+Let’s have a look at the ‘mvp’ structure, which does have a lot in
+common with full-blown CRAN-ready packages:
 <https://github.com/EvaMaeRey/ggprop.test>
+
+<details>
 
 ``` r
 fs::dir_tree()
@@ -81,6 +134,21 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-11-6.png
 #> │       ├── unnamed-chunk-11-7.png
 #> │       ├── unnamed-chunk-11-8.png
+#> │       ├── unnamed-chunk-12-1.png
+#> │       ├── unnamed-chunk-13-1.png
+#> │       ├── unnamed-chunk-13-2.png
+#> │       ├── unnamed-chunk-14-1.png
+#> │       ├── unnamed-chunk-14-2.png
+#> │       ├── unnamed-chunk-14-3.png
+#> │       ├── unnamed-chunk-14-4.png
+#> │       ├── unnamed-chunk-14-5.png
+#> │       ├── unnamed-chunk-14-6.png
+#> │       ├── unnamed-chunk-14-7.png
+#> │       ├── unnamed-chunk-14-8.png
+#> │       ├── unnamed-chunk-16-1.png
+#> │       ├── unnamed-chunk-18-1.png
+#> │       ├── unnamed-chunk-18-2.png
+#> │       ├── unnamed-chunk-19-1.png
 #> │       ├── unnamed-chunk-3-1.png
 #> │       ├── unnamed-chunk-4-1.png
 #> │       ├── unnamed-chunk-4-2.png
@@ -113,9 +181,11 @@ fs::dir_tree()
 #> └── man
 ```
 
+</details>
+
 ------------------------------------------------------------------------
 
-# Student start!
+# Back to the prop test!! Yay!!
 
 > Motivating question: For survey of 161 individuals on willingness to
 > serve as organ doners in the case of an accident, is there evidence
@@ -124,7 +194,8 @@ fs::dir_tree()
 
 > Does the sample provide statistical evidence that there isn’t a 50-50
 > split in preference for donation? Or indiffernece (like people are
-> just answering randomly because they are not paying attention or )
+> just answering randomly because they are not paying attention). Is
+> their answer equivelant to tossing a coin?
 
 {ggprop.test} can be installed as follows…
 
@@ -135,86 +206,52 @@ install_github("EvaMaeRey/ggprop.test")
 
 ``` r
 library(tidyverse)
-
 library(ggprop.test)
-
-
-donor_data |> 
-  pull(decision) |> 
-  table()
-#> 
-#>   not (0) donor (1) 
-#>        53       108
 ```
+
+<details>
+
+# data and scenarios
+
+“<https://www.isi-stats.com/isi/data/prelim/OrganDonor.txt>”
 
 ``` r
 library(tidyverse)
 
-isi_donor_url <- "https://www.isi-stats.com/isi/data/prelim/OrganDonor.txt"
-
-donor_data <- read_delim(isi_donor_url) %>%
-  select(Choice) %>% 
-  dplyr::mutate(decision = ifelse(Choice == "donor", "donor (1)", "not (0)")) %>% 
-  dplyr::mutate(decision = fct_rev(decision)) |> 
+set.seed(1234)
+donor_data <- rep(c("donor (1)", "not (0)"), c(108,53)) |> 
+  fct_rev() |> 
+  tibble(decision = _) |> 
   sample_frac()
 
 head(donor_data)
-#> # A tibble: 6 × 2
-#>   Choice decision 
-#>   <chr>  <fct>    
-#> 1 not    not (0)  
-#> 2 donor  donor (1)
-#> 3 not    not (0)  
-#> 4 donor  donor (1)
-#> 5 donor  donor (1)
-#> 6 donor  donor (1)
+#> # A tibble: 6 × 1
+#>   decision 
+#>   <fct>    
+#> 1 donor (1)
+#> 2 donor (1)
+#> 3 not (0)  
+#> 4 donor (1)
+#> 5 not (0)  
+#> 6 not (0)
 
-dolphin_data <- tribble(~observed,
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Not Correct (0)",
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Correct (1)",
-                         "Correct (1)") |> 
-  dplyr::mutate(observed = fct_rev(observed))
-```
-
-``` r
-usethis::use_data(dolphin_data, overwrite = T)
 usethis::use_data(donor_data, overwrite = T)
 ```
 
+</details>
+
+How can ggprop.test functions help visualize the basics of this
+question?
+
+What is the proportion opting in?
+
 ``` r
-library(ggprop.test)
-snapshot <- ggplyr::intercept
-
-
-# Does the sample provide statistical evidence that there isn't a 50-50 split in preference for donation?
-# or indiffernece (like people are just answering randomly because they are not paying attention or )
 donor_data |> 
   pull(decision) |> 
   table()
 #> 
 #>   not (0) donor (1) 
 #>        53       108
-
-
-dolphin_data |> 
-  pull(observed) |> 
-  table()
-#> 
-#> Not Correct (0)     Correct (1) 
-#>               1              15
 ```
 
 ``` r
@@ -222,83 +259,66 @@ donor_data |>
   ggplot() + 
   aes(x = decision) +
   geom_stack() + 
-  geom_stack_label() + snapshot("p1") +
-  geom_support() + snapshot("p2") +
-  geom_prop() + 
-  geom_prop_label() + snapshot("p3") +
-  stamp_prop() + 
-  stamp_prop_label() + snapshot("p4") +
-  stamp_eq_norm_prop() +
-  geom_normal_prop_null() + snapshot("p5") +
-  geom_normal_prop_null_sds() + snapshot("p6")
-```
-
-![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
-
-``` r
-
-
-# Doris and buzz cooperate to get fish
-dolphin_data |>
-  ggplot() + 
-  aes(x = observed) +
-  geom_stack() + 
   geom_stack_label() + 
-  geom_support() + 
-  geom_prop() + 
-  geom_prop_label() + 
-  stamp_prop() + 
-  stamp_prop_label() + 
-  stamp_eq_norm_prop() +
-  geom_normal_prop_null() + 
-  geom_normal_prop_null_sds() + 
-  labs(title = "Are Dolphins Buzz and Doris Cooperating?") + 
-  labs(caption = "Wait! Are the 'validity conditions' met here to use the normal approximation?")
+  geom_support()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
-If we discuss each of the snapshot points, we could write something like
-this:
+# How many trials where we are drawing from NULL, before we see something as far from .5 as .67?
+
+# Example \# 2
+
+<details>
 
 ``` r
-library(patchwork)
-(p1 + p2) / 
-(p3 + p4) /
-(p5 + p6)  + 
-  patchwork::plot_annotation(
-    tag_levels = 1,
-    title = "A prop test 'graphical poem' addressing the question: 
-    
-        For survey of 161 individuals on willingness to serve as 
-        organ doners in the case of an accident, is there evidence
-        that responses rate differs from a 50/50 split, 
-        when 53 individuals respond 'no' and 108 individuals respond 'yes'?
-      ",
-    subtitle = "1. Draw bar chart (stacks) for each category.
-2. Draw theoretical limits for proportion (0 to 1).
-3. Calculate proportion and place (also the balancing point for stacks!).
-4. Place null (look at the initial question, 'differs from 50/50' in this case)
-5. Draw distribution for NULL, where SD = sqrt((p * (1-p))/n)
-6. Calc z-score - where does observed prop fit into NULL distributions 
-   (i.e. how many standard deviations fit between .5 and .67)"
-                             ) &
-  ggchalkboard:::theme_chalkboard(base_size = 14) 
+set.seed(12345)
+dolphin_data <- rep(c("Correct (1)", 
+                      "Not Correct (0)"), 
+                    c(15, 1)) |> 
+  sample() |>
+  tibble(observed = _) |>
+  dplyr::mutate(observed = fct_rev(observed))
+
+usethis::use_data(dolphin_data, overwrite = T)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+</details>
+
+``` r
+dolphin_data
+#> # A tibble: 16 × 1
+#>    observed       
+#>    <fct>          
+#>  1 Correct (1)    
+#>  2 Correct (1)    
+#>  3 Correct (1)    
+#>  4 Correct (1)    
+#>  5 Correct (1)    
+#>  6 Not Correct (0)
+#>  7 Correct (1)    
+#>  8 Correct (1)    
+#>  9 Correct (1)    
+#> 10 Correct (1)    
+#> 11 Correct (1)    
+#> 12 Correct (1)    
+#> 13 Correct (1)    
+#> 14 Correct (1)    
+#> 15 Correct (1)    
+#> 16 Correct (1)
+```
 
 ------------------------------------------------------------------------
 
-# What’s inside and how did we get here?
+# Visualizing raw data
 
-## step 00. cloning statexpress functions
+<details>
+
+### cloning statexpress functions
 
 Some convenience functions from {statexpress} are used, because we want
 this to be a bit more self-contained at this point, so we just clone
 them for now. statexpress is evolving and is not on CRAN.
-
-<details>
 
 ``` r
 qlayer <- function (mapping = NULL, data = NULL, geom = ggplot2::GeomPoint, stat = StatIdentity, 
@@ -341,26 +361,25 @@ qproto_update <- function (`_inherit`, default_aes_update = NULL, ...)
 }
 ```
 
-Now let’s see the compute…
+### And then define the functions…
 
 ``` r
-library(tidyverse)
-
 # 1. layer stack of bricks
 compute_group_bricks <- function(data, scales, width = .2){
   
-  data %>% 
-    dplyr::mutate(row = row_number()) %>% 
-    dplyr::mutate(y = row - .5) %>% 
+  data |> 
+    dplyr::mutate(row = row_number()) |> 
+    dplyr::mutate(y = row - .5) |> 
     dplyr::mutate(width = width)
   
 }
 
+
 # 2. layer label stack with count
 compute_group_count <- function(data, scales){
   
-  data %>% 
-    dplyr::count(x) %>% 
+  data |> 
+    dplyr::count(x) |> 
     dplyr::mutate(y = n,
            label = n)
   
@@ -370,182 +389,15 @@ compute_group_count <- function(data, scales){
 # 3. layer add x span
 compute_balance <- function(data, scales){
   
-  data %>% 
+  data |> 
     dplyr::summarise(min_x = min(x),
               xend = max(x),
               y = 0,
-              yend = 0) %>% 
+              yend = 0) |> 
     dplyr::rename(x = min_x)
   
 }
 
-
-# 4. layer add balancing point 
-compute_xmean_at_y0 <- function(data, scales){
-  
-  data %>% 
-    dplyr::summarise(x = mean(x),
-              y = 0, 
-              label = "^") 
-  
-}
-
-# 5. layer add balancing point value label
-compute_xmean_at_y0_label <- function(data, scales){
-  
-  data %>% 
-    dplyr::summarise(x = mean(x),
-              y = 0, 
-              label = after_stat(round(x, 2))) 
-  
-}
-
-
-
-# 6. Add 'point' for asserted balancing point (null)
-compute_panel_prop_asserted <- function(data, scales, value = .5){
-  
-  # stamp type layer - so ignore input data
-  data.frame(y = 0, 
-             x = null,
-             label = "^"
-             )
-  
-}
-
-# 6. Add label for asserted balancing point (null)
-compute_panel_prop_asserted_label <- function(data, scales, value = .5){
-  
-  # stamp type layer - so ignor input data
-  data.frame(y = 0, 
-             x = null,
-             label = round(null, 2)
-             )
-  
-}
-
-
-
-
-# 7. normal distribution based on null and n
-compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5, by = .1)
-){
-  
-  n <- data |> nrow()
-  n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
-
-  
-  sd = sqrt(null * (1 - null)/n) # sd of the null distribution
-  
-  q <- dist_sds * sd + null
-  
-  data.frame(x = q) %>%
-    dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) %>%
-    dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) %>%
-    dplyr::mutate(y = .55*n_max*height/height_max) %>%  # This is a bit fragile...
-    dplyr::mutate(xend = x,
-           yend = 0) %>% 
-    # @teunbrand ggplot2::GeomArea$setup_data() requires a group column. Your panel computation does not preserve groups, but it should.
-    dplyr::mutate(group = 1) 
-  
-}  
-
-
-# 8. normal distribution mean and sds based on null and n
-compute_dnorm_prop_sds <- function(data, scales, null = .5,
-  dist_sds = -4:4){
-  
-  n <- data |> nrow()
-  
-  n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
-  
-  sd = sqrt(null * (1 - null)/n) # sd of the null distribution
-  
-  q <- dist_sds * sd + null
-  
-  data.frame(x = q) %>%
-    dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) %>%
-    dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) %>%
-    dplyr::mutate(y = .55*n_max*height/height_max) %>% # This is a bit fragile...
-    dplyr::mutate(xend = x,
-           yend = 0)
-
-}  
-```
-
-``` r
-GeomTextBig <- ggproto("GeomTextBig", GeomText,
-                       default_aes = modifyList(GeomText$default_aes,
-                                                aes(size = from_theme(fontsize))
-                                                ))
-
-
-#' @export
-stamp_eq_norm_prop <- function(x = I(.125),
-    y = I(.8), ...){
-  
-  annotate(
-    "text",
-    x = x,
-    y = y,
-    label = latex2exp::TeX("sd = \\sqrt{\\frac{p*(1-p)}{n}}", output = "character"),
-    parse = TRUE, ...
-  )
-
-}
-```
-
-# Step 1. Use the compute in a rendered plot
-
-Sketch mode - where you don’t actually define functions, we just have
-proposals commented out.
-
-``` r
-donor_data |>
-  ggplot() +
-  aes(x = decision) +
-  # 1 geom_stack
-  qlayer(geom = qproto_update(GeomTile, aes(color = from_theme(paper))), 
-         stat = qstat(compute_group_bricks)) +
-  # 2 geom_stack_label() 
-  qlayer(geom = qproto_update(GeomText, aes(vjust = 0)), 
-         stat = qstat(compute_group_count)) +
-  # 3 geom_xrange, show scale, range at y is zero
-  qlayer(geom = GeomSegment, 
-         stat = qstat_panel(compute_balance)) +
-  # 4. geom_prop, show prop, i.e. balancing point
-  qlayer(geom = qproto_update(GeomText, aes(size = 6, vjust = 1)),
-         stat = qstat_panel(compute_xmean_at_y0)) + 
-  scale_x_discrete(palette = scales::pal_manual(0:1)) +
-  # 5. geom_prop_label, labeling prop, balancing point
-  qlayer(geom = qproto_update(GeomLabel, aes(fill = from_theme(colour %||% paper), label.size = NA, vjust = 0)),
-         stat = qstat_panel(compute_xmean_at_y0_label))  +   
-  # 6. stamp_prop, assertion, point
-  qlayer(geom = qproto_update(GeomText, aes(size = 6, vjust = 1, color = from_theme(colour %||% accent))),
-         stat = qstat_panel(compute_panel_prop_asserted), data = data.frame(x = 1), inherit.aes = F) +
-  # 7. stamp_prop_label, assertion, label
-  qlayer(geom = qproto_update(GeomLabel, 
-                              aes(fill = from_theme(colour %||% paper), 
-                                  label.size = NA, vjust = 0, 
-                                  color = from_theme(colour %||% accent))),
-         stat = qstat_panel(compute_panel_prop_asserted_label), data = data.frame(x = 1), inherit.aes = F) +
-  stamp_eq_norm_prop() +
-  # 8. geom_norm on prop plot
-  qlayer(geom = qproto_update(GeomArea, aes(alpha = .2)),
-         stat = qstat_panel(compute_dnorm_prop)) + 
-   # 9. geom_prop_norm w/ sd marks
-   qlayer(geom = qproto_update(GeomSegment, aes(linetype = "dotted")),
-          stat = qstat_panel(compute_dnorm_prop_sds)) +
-  labs(title = "Is there statistical evidence that choice to between being an\nan organ donar or not differs from 50/50") 
-```
-
-![](README_files/figure-gfm/prop_poem-1.png)<!-- -->
-
-# And then define the functions…
-
-<details>
-
-``` r
 
 
 #' @export
@@ -568,18 +420,115 @@ geom_support <- function(...){
          stat = qstat_panel(compute_balance), 
          ...)
   }
+```
+
+</details>
+
+------------------------------------------------------------------------
+
+Would we reflect: “I don’t think that the null is true. It’d be
+extremely rare to see something as big as .67 if the null were true. The
+observed balance (proportion) of .67 doesn’t look consistent with a
+population balance of .5”
+
+–
+
+Term of art: “we reject the null hypothesis”
+
+``` r
+donor_data |> 
+  ggplot() + 
+  aes(x = decision) + 
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_support()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+``` r
+
+donor_base_plot <- last_plot()
 
 
-scale_x_prop <- function(...){ 
+dolphin_data |> 
+  ggplot() + 
+  aes(x = observed) + 
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_support()
+```
 
-  scale_x_discrete(palette = scales::pal_manual(0:1), ...) 
+![](README_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
+
+``` r
+
+dolphins_base_plot <- last_plot()
+```
+
+# Calculating Prop, and allowing Null to be visualized
+
+<details>
+
+``` r
+# 4. layer add balancing point 
+compute_xmean_at_y0 <- function(data, scales){
   
+  data |> 
+    dplyr::summarise(x = mean(x),
+              y = 0, 
+              label = "^") 
+  
+}
+
+
+# 5. layer add balancing point value label
+compute_xmean_at_y0_label <- function(data, scales){
+  
+  data |> 
+    dplyr::summarise(x = mean(x),
+              y = 0, 
+              label = after_stat(round(x, 2))) 
+  
+}
+
+
+# 6. Add 'point' for asserted balancing point (null)
+compute_panel_prop_asserted <- function(data, scales, value = .5){
+  
+  # stamp type layer - so ignore input data
+  data.frame(y = 0, 
+             x = value,
+             label = "^"
+             )
+  
+}
+
+# 6. Add label for asserted balancing point (null)
+compute_panel_prop_asserted_label <- function(data, scales, value = .5){
+  
+  # stamp type layer - so ignor input data
+  data.frame(y = 0, 
+             x = value,
+             label = round(value, 2)
+             )
+  
+}
+
+
+
+scale_x_prop <- function(...){
+
+  scale_x_discrete(palette = scales::pal_manual(0:1), ...)
+
 }
 
 #' @export
 geom_prop <- function(...){
   list(
-  qlayer(geom = qproto_update(ggplot2::GeomText, ggplot2::aes(size = 6, vjust = 1)),
+  qlayer(geom = qproto_update(ggplot2::GeomText, 
+                              ggplot2::aes(size = 6, vjust = 1,
+                                           color = ggplot2::from_theme(colour %||% accent))),
          stat = qstat_panel(compute_xmean_at_y0),
          ...),
   scale_x_prop()
@@ -589,7 +538,9 @@ geom_prop <- function(...){
 #' @export
 geom_prop_label <- function(...){ 
   qlayer(geom = qproto_update(ggplot2::GeomLabel, 
-                              ggplot2::aes(fill = ggplot2::from_theme(colour %||% paper), label.size = NA, vjust = 0)),
+                              ggplot2::aes(fill = ggplot2::from_theme(colour %||% paper), 
+                                           color = ggplot2::from_theme(colour %||% accent),
+                                           label.size = NA, vjust = 0)),
          stat = qstat_panel(compute_xmean_at_y0_label), 
          ...) 
   }
@@ -599,7 +550,7 @@ stamp_prop <- function(...){
   qlayer(geom = qproto_update(ggplot2::GeomText, 
                               ggplot2::aes(size = 6, 
                                            vjust = 1, 
-                                           color = ggplot2::from_theme(colour %||% accent))),
+                                           color = ggplot2::from_theme(colour %||% ink))),
          stat = qstat_panel(compute_panel_prop_asserted), 
          data = data.frame(x = 1), 
          inherit.aes = FALSE,
@@ -612,13 +563,189 @@ stamp_prop_label <- function(...){
   qlayer(geom = qproto_update(ggplot2::GeomLabel, 
                               ggplot2::aes(fill = ggplot2::from_theme(colour %||% paper), 
                                   label.size = NA, vjust = 0, 
-                                  color = ggplot2::from_theme(colour %||% accent))),
+                                  color = ggplot2::from_theme(colour %||% ink))),
          stat = qstat_panel(compute_panel_prop_asserted_label), 
          data = data.frame(x = 1), 
          inherit.aes = FALSE,
          ...
          )
   }
+```
+
+</details>
+
+``` r
+donor_base_plot + 
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop() + 
+  stamp_prop_label()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+
+donors_balance_plot <- last_plot()
+
+dolphins_base_plot + 
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop() + 
+  stamp_prop_label()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
+
+``` r
+
+dolphins_balance_plot <- last_plot()
+```
+
+## What’s observed under Null hypothesis?
+
+<details>
+
+``` r
+data_generate_plausible <- function(data, var, prob = .5){
+  
+  observed <- data |> 
+    pull({{var}})
+  
+  generated <- levels(observed) |>  # take two 
+    sample(size = nrow(data), replace = T) |> 
+    # restore category ordering
+    factor(levels = levels(observed))
+  
+  data |> 
+    mutate(plausible = generated)
+  
+}
+
+
+
+#' @export
+x_from_null <- function(data = NULL, prob = .5) {
+
+  structure(
+    list(prob = prob), 
+    class = "x_from_null"
+    )
+
+}
+
+
+#' @import ggplot2
+#' @importFrom ggplot2 ggplot_add
+#' @export
+ggplot_add.x_from_null <- function(object, plot, object_name) {
+  
+  xname <- plot@mapping |> as.character() |> str_remove("~")
+  
+  xname
+  
+  var <- plot$data |> pull(xname)
+  
+  plot$data[xname] <-  
+     sample(levels(var), 
+            size = length(var), 
+            replace = T, prob = c(1-object$prob, object$prob)
+            ) |> 
+     # restore category ordering
+    factor(levels = levels(var))
+  
+  plot + labs(x = "plausible from null") + 
+  stamp_prop(value = mean(var |> as.numeric()) -1) + 
+  stamp_prop_label(value = mean(var |> as.numeric())-1) 
+
+}
+```
+
+</details>
+
+``` r
+dolphins_balance_plot + 
+  x_from_null()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+# Distributions for the Null…
+
+<details>
+
+``` r
+# 7. normal distribution based on null and n
+compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5, by = .1)
+){
+  
+  n <- data |> nrow()
+  n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
+
+  
+  sd = sqrt(null * (1 - null)/n) # sd of the null distribution
+  
+  q <- dist_sds * sd + null
+  
+  data.frame(x = q) |>
+    dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
+    dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
+    dplyr::mutate(y = .55*n_max*height/height_max) |>  # This is a bit fragile...
+    dplyr::mutate(xend = x,
+           yend = 0) |> 
+    # @teunbrand ggplot2::GeomArea$setup_data() requires a group column. Your panel computation does not preserve groups, but it should.
+    dplyr::mutate(group = 1) 
+  
+}  
+
+
+# 8. normal distribution mean and sds based on null and n
+compute_dnorm_prop_sds <- function(data, scales, null = .5,
+  dist_sds = -4:4){
+  
+  n <- data |> nrow()
+  
+  n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
+  
+  sd = sqrt(null * (1 - null)/n) # sd of the null distribution
+  
+  q <- dist_sds * sd + null
+  
+  data.frame(x = q) |>
+    dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
+    dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
+    dplyr::mutate(y = .55*n_max*height/height_max) |> # This is a bit fragile...
+    dplyr::mutate(xend = x,
+           yend = 0)
+
+}  
+
+
+
+# Compute from ma206 data
+tidy_dbinom <- function(single_trial_prob = .5, num_trials = 10){
+
+  num_successes <- 0:num_trials
+  probability <- stats::dbinom(x = num_successes, size = num_trials, prob = single_trial_prob)
+
+  tibble::tibble(num_successes, probability, single_trial_prob, num_trials)
+
+}
+
+
+compute_dbinom <- function(data, scales, prob = .5){
+  
+  num_trials <- nrow(data)
+  
+  tidy_dbinom(single_trial_prob = .5, 
+              num_trials = num_trials) |> 
+    mutate(x = num_successes/max(num_successes),
+           y = num_trials/2*probability/max(probability),
+           yend = 0,
+           xend = x) 
+  
+}
+
 
 #' @export
 geom_normal_prop_null <- function(...){
@@ -633,195 +760,70 @@ geom_normal_prop_null_sds <- function(...){
           stat = qstat_panel(compute_dnorm_prop_sds), 
           ...)
   }
+```
 
- 
+``` r
+GeomTextBig <- ggproto("GeomTextBig", GeomText,
+                       default_aes = 
+                         modifyList(GeomText$default_aes,
+                                    aes(size = from_theme(fontsize))))
 
 
-# #' @export
-# geom_diff <- function(...){
-#    qlayer(geom = qproto_update(ggplot2::GeomSegment, ggplot2::aes(linetype = "dotted")),
-#           stat = qstat_panel(compute_dnorm_prop_sds), 
-#           ...)
-#   
-#      qlayer(geom = qproto_update(ggplot2::GeomSegment, ggplot2::aes(linetype = "dotted")),
-#           stat = qstat_panel(compute_dnorm_prop_sds), 
-#           ...)
-#   
-#   }
+#' @export
+stamp_eq_norm_prop <- function(x = I(.125),
+    y = I(.8), ...){
+  
+  annotate(
+    "text",
+    x = x,
+    y = y,
+    label = latex2exp::TeX("sd = \\sqrt{\\frac{p*(1-p)}{n}}", output = "character"),
+    parse = TRUE, ...
+  )
+
+}
 ```
 
 </details>
 
-# Done! See below for all layers, and the introduction of packag for potential break-points along the prop test train of thought.
-
 ``` r
-library(ggplot2)
-library(ggprop.test)
-library(S7)
-
-theme_set(
-  ggchalkboard:::theme_blackboard(
-    base_size = 12))
-
-
-layers_remove <- function(i = NULL) {
-
-  structure(
-    list(index_wipe = i), 
-    class = "layers_remove"
-    )
-
-}
-
-
-method(update_ggplot, list(new_S3_class("layers_remove"), class_ggplot)) <- 
-  function(object, plot, ...) {
-    
-  if(is.null(object$index_wipe)){
-   
-    plot$layers <- list()
-     
-  }else{
-    
-    plot$layers[object$index_wipe] <- NULL
-
-  }
-  
-  plot
-    
-  }
-
-
-donor_data |>
+dolphin_data |> 
   ggplot() + 
-  aes(x = decision) +
-  geom_stack() + 
-  geom_stack_label() + 
+  aes(x = observed) + 
+  geom_stack() +
   geom_support() + 
+  geom_stack_label() + 
   geom_prop() + 
   geom_prop_label() + 
   stamp_prop() + 
-  stamp_prop_label() + 
-  geom_normal_prop_null() +
-  geom_normal_prop_null_sds() + 
-  stamp_eq_norm_prop()
+  stamp_prop_label() +
+  geom_segment(stat = qstat_panel(compute_dbinom))
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
+``` r
+  
+donor_data |> 
+  ggplot() + 
+  aes(x = decision) + 
+  geom_stack() +
+  geom_support() + 
+  geom_stack_label() + 
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop() + 
+  stamp_prop_label() +
+  geom_segment(stat = qstat_panel(compute_dbinom)) 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
+
+# Done! See below for all layers, and the introduction of packag for potential break-points along the prop test train of thought.
 
 </details>
 
-``` r
-# ?prop.test
-prop.test(x = sum(donor_data$Choice == "donor"), # n true
-          n = length(donor_data$Choice), # num observations
-          p = .5) # null
-#> 
-#>  1-sample proportions test with continuity correction
-#> 
-#> data:  sum(donor_data$Choice == "donor") out of length(donor_data$Choice), null probability 0.5
-#> X-squared = 18.112, df = 1, p-value = 2.083e-05
-#> alternative hypothesis: true p is not equal to 0.5
-#> 95 percent confidence interval:
-#>  0.5917808 0.7415370
-#> sample estimates:
-#>         p 
-#> 0.6708075
-```
-
 ------------------------------------------------------------------------
-
-``` r
-
-plausible_based_on_null <- function(data, var, prob = .5){
-  
-  observed <- data |> 
-    pull({{var}})
-  
-  generated <- levels(observed) |>  # take two 
-    sample(size = nrow(data), replace = T) |> 
-    # restore category ordering
-    factor(levels = levels(observed))
-  
-  data |> 
-    mutate(plausible = generated)
-  
-}
-```
-
-``` r
-plausible_based_on_null(donor_data, var = decision) 
-#> # A tibble: 161 × 3
-#>    Choice decision  plausible
-#>    <chr>  <fct>     <fct>    
-#>  1 not    not (0)   not (0)  
-#>  2 donor  donor (1) donor (1)
-#>  3 not    not (0)   donor (1)
-#>  4 donor  donor (1) donor (1)
-#>  5 donor  donor (1) donor (1)
-#>  6 donor  donor (1) donor (1)
-#>  7 donor  donor (1) not (0)  
-#>  8 donor  donor (1) donor (1)
-#>  9 not    not (0)   donor (1)
-#> 10 donor  donor (1) donor (1)
-#> # ℹ 151 more rows
-
-donor_data |> 
-  plausible_based_on_null(decision) |>
-  ggplot() + 
-  aes(x = plausible) + 
-  labs(x = "plausible balance if null (50-50) is true") +
-  geom_stack() + 
-  geom_prop() + 
-  geom_prop_label() + 
-  geom_support() + 
-  stamp_prop(value = .67)
-```
-
-![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
-
-``` r
-
-last_plot() + plausible_based_on_null(donor_data, var = decision) 
-```
-
-![](README_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
-
-``` r
-last_plot() + plausible_based_on_null(donor_data, var = decision) 
-```
-
-![](README_files/figure-gfm/unnamed-chunk-14-3.png)<!-- -->
-
-``` r
-last_plot() + plausible_based_on_null(donor_data, var = decision) 
-```
-
-![](README_files/figure-gfm/unnamed-chunk-14-4.png)<!-- -->
-
-``` r
-last_plot() + plausible_based_on_null(donor_data, var = decision) 
-```
-
-![](README_files/figure-gfm/unnamed-chunk-14-5.png)<!-- -->
-
-``` r
-last_plot() + plausible_based_on_null(donor_data, var = decision) 
-```
-
-![](README_files/figure-gfm/unnamed-chunk-14-6.png)<!-- -->
-
-``` r
-last_plot() + plausible_based_on_null(donor_data, var = decision) 
-```
-
-![](README_files/figure-gfm/unnamed-chunk-14-7.png)<!-- -->
-
-``` r
-last_plot() + plausible_based_on_null(donor_data, var = decision) 
-```
-
-![](README_files/figure-gfm/unnamed-chunk-14-8.png)<!-- -->
 
 ------------------------------------------------------------------------
 
