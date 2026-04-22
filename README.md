@@ -1,31 +1,28 @@
 ggprop.test
 ================
 
-- [Where we are headed…](#where-we-are-headed)
-- [{ggprop.test} is a micro *package* that translates the visual logic
-  of the prop test to
-  ggplot2.](#ggproptest-is-a-micro-package-that-translates-the-visual-logic-of-the-prop-test-to-ggplot2)
+- [Where we are headed (what ggprop.test
+  delivers)](#where-we-are-headed-what-ggproptest-delivers)
+- [{ggprop.test} is teaching ‘mvp’ (minimum viable package) that
+  translates the visual logic of the prop test to
+  ggplot2.](#ggproptest-is-teaching-mvp-minimum-viable-package-that-translates-the-visual-logic-of-the-prop-test-to-ggplot2)
   - [Motivation for ggproptest and
     friends.](#motivation-for-ggproptest-and-friends)
   - [An introductiong to packaging requirements via
     ggprop.test](#an-introductiong-to-packaging-requirements-via-ggproptest)
-- [Back to the prop test!! Yay!!](#back-to-the-prop-test-yay)
-- [data and scenarios](#data-and-scenarios)
-- [How many trials where we are drawing from NULL, before we see
-  something as far from .5 as
-  .67?](#how-many-trials-where-we-are-drawing-from-null-before-we-see-something-as-far-from-5-as-67)
-- [Example \# 2](#example--2)
+- [Back to exploring the prop test!!
+  Yay!!](#back-to-exploring-the-prop-test-yay)
+- [Data and Scenarios](#data-and-scenarios)
+  - [scenario 1: organ donation](#scenario-1-organ-donation)
+  - [scenario 2: dolphins](#scenario-2-dolphins)
 - [Visualizing raw data](#visualizing-raw-data)
-  - [cloning statexpress functions](#cloning-statexpress-functions)
-  - [And then define the functions…](#and-then-define-the-functions)
-- [Calculating Prop, and allowing Null to be
-  visualized](#calculating-prop-and-allowing-null-to-be-visualized)
-  - [What’s observed under Null
-    hypothesis?](#whats-observed-under-null-hypothesis)
-- [Distributions for the Null…](#distributions-for-the-null)
-- [Done! See below for all layers, and the introduction of packag for
-  potential break-points along the prop test train of
-  thought.](#done-see-below-for-all-layers-and-the-introduction-of-packag-for-potential-break-points-along-the-prop-test-train-of-thought)
+- [Calc and Viz the Proportion, allowing null to be
+  visualized](#calc-and-viz-the-proportion-allowing-null-to-be-visualized)
+- [Interlude: What individual outcomes *would* we observe under null
+  hypothesis?](#interlude-what-individual-outcomes-would-we-observe-under-null-hypothesis)
+- [Distributions for the Null: What collections of hypothetical outcomes
+  *could* we observe under null
+  hypothesis?](#distributions-for-the-null-what-collections-of-hypothetical-outcomes-could-we-observe-under-null-hypothesis)
 - [Minimal Packaging](#minimal-packaging)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -34,56 +31,58 @@ ggprop.test
 library(ggprop.test)
 ```
 
-## Where we are headed…
+## Where we are headed (what ggprop.test delivers)
 
 ![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 If we discuss each of the snapshot points, we could write something like
 this:
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
 
-## {ggprop.test} is a micro *package* that translates the visual logic of the prop test to ggplot2.
+## {ggprop.test} is teaching ‘mvp’ (minimum viable package) that translates the visual logic of the prop test to ggplot2.
 
 ### Motivation for ggproptest and friends.
 
-Telling a story with data is a popular idea.
+‘Telling a story with data’ is a popular idea. Let’s hear from some
+folks on data storytelling:
 
 > The book is meant as a guide to making visualizations that accurately
-> reflect the data, *tell a story*, and look professional. -
-> [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/),
-> Clause Wilke…
+> reflect the data, *tell a story*, and look professional. - Clause
+> Wilke in [Fundamentals of Data
+> Visualization](https://clauswilke.com/dataviz/), I’m focusing on
+> visual design and *storytelling* within our organization. – Will
+> Chase’s introduction for [‘The *Glamour* of Graphics’ talk
+> 2020](https://www.youtube.com/watch?v=h5cTacaWE6I)
 
 > Companies like [Story Telling with
 > Data](https://www.storytellingwithdata.com/) and [Building Stories
 > with Data](https://www.cararthompson.com/) put this idea front and
 > center to their missions.
 
-> I’m focusing on visual design and storytelling within our
-> organization. Will Chase’s introduction for [‘the *glamour* of
-> graphics’ talk 2020](https://www.youtube.com/watch?v=h5cTacaWE6I)
-
 However, the ‘data storytelling’ tends to be focused on reaching broad
 audiences, communicating statistical summaries (rather than
-trains-of-thought), and compelling complete plots.
+trains-of-thought), and compelling complete plots. 📊
 
 {ggprop.test} and friends, in contrast, are an attempt to capture the
-*statistical stories* that are told in *classrooms* all the time
-visually, but don’t yet have translations to code.
+*statistical stories* that are told in words and with visual schema all
+the time in classrooms, but don’t yet have translations to code.
 
 {ggprop.test} exists to allow instructors and students to engage with
 the logic of statistical tests and techniques, often presented
-step-by-step on a chalkboard in a class room, but programmatically!
+step-by-step on a chalkboard 🧑‍🏫 in a class room, but now also
+programmatically!
 
-Which we don’t aim to replace the chalkboard/paper experience but
-compliment it - indeed it’s the inspiration for this project. See [New
+Which we don’t aim to replace the chalkboard/paper 📝 experience but
+compliment it —- it’s the inspiration for this project. See [New
 approaches to light-weight ‘geom’ (layer) extension]()
 <https://evamaerey.github.io/mytidytuesday/2024-10-29-asa-cowy-fall-2024/asa-cowy-fall-2024.html#22>)
 
-This might mean that instead of using the logic a handful of times for a
-handful of examples, student and instructors might walk through this
-logic *many* times - becoming not just familiar with the logic, but
-fluent.
+Having tools like ggprop.test might mean that instead of using the logic
+a handful of times for a handful of examples, student and instructors
+might walk through this logic *large number* of times - becoming **not
+just familiar** with the logic, but **fluent** with the visual,
+statistical story.
 
 Under the hood, ggplot2 extension is used so that individual concepts
 can be delivered in both a semantic and visual way.
@@ -97,8 +96,9 @@ a package to CRAN and doesn’t adhere to all of [packaging best
 practices](https://r-pkgs.org/), noting that student feedback and might
 lead to pretty dramatic changes and rewrites.
 
-Let’s have a look at the ‘mvp’ structure, which does have a lot in
-common with full-blown CRAN-ready packages:
+In our Spring 2026 class, we’ll pull back the curtain on package a tad,
+by having Let’s have a look at the ‘mvp’ ggprop.test structure (which
+does have a lot in common with full-blown CRAN-ready packages):
 <https://github.com/EvaMaeRey/ggprop.test>
 
 <details>
@@ -109,9 +109,10 @@ fs::dir_tree()
 #> ├── DESCRIPTION
 #> ├── NAMESPACE
 #> ├── R
-#> │   ├── compute_for_prop_story.R
-#> │   ├── prop_poem_functions.R
-#> │   ├── stamp_eq_norm_prop.R
+#> │   ├── collections_null.R
+#> │   ├── compute_prop_viz.R
+#> │   ├── gen_under_null.R
+#> │   ├── raw_data_viz.R
 #> │   └── statexpress.R
 #> ├── README.Rmd
 #> ├── README.md
@@ -135,6 +136,7 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-11-7.png
 #> │       ├── unnamed-chunk-11-8.png
 #> │       ├── unnamed-chunk-12-1.png
+#> │       ├── unnamed-chunk-12-2.png
 #> │       ├── unnamed-chunk-13-1.png
 #> │       ├── unnamed-chunk-13-2.png
 #> │       ├── unnamed-chunk-14-1.png
@@ -145,7 +147,12 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-14-6.png
 #> │       ├── unnamed-chunk-14-7.png
 #> │       ├── unnamed-chunk-14-8.png
+#> │       ├── unnamed-chunk-15-1.png
 #> │       ├── unnamed-chunk-16-1.png
+#> │       ├── unnamed-chunk-16-2.png
+#> │       ├── unnamed-chunk-16-3.png
+#> │       ├── unnamed-chunk-17-1.png
+#> │       ├── unnamed-chunk-17-2.png
 #> │       ├── unnamed-chunk-18-1.png
 #> │       ├── unnamed-chunk-18-2.png
 #> │       ├── unnamed-chunk-19-1.png
@@ -181,21 +188,37 @@ fs::dir_tree()
 #> └── man
 ```
 
+Goal for package functions?
+
+- ‘Erogenomics’.  
+- Trace a train of thought…
+- Approximate the wonderful analogue experience
+
+``` r
+knitr::include_graphics("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*hZubBVjVDcl8ZixE-WRDvA.jpeg")
+```
+
+![](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*hZubBVjVDcl8ZixE-WRDvA.jpeg)<!-- -->
+
+``` r
+
+knitr::include_graphics("https://images.unsplash.com/photo-1535535112387-56ffe8db21ff?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
+```
+
+![](https://images.unsplash.com/photo-1535535112387-56ffe8db21ff?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)<!-- -->
+
+``` r
+
+knitr::include_graphics("https://media.licdn.com/dms/image/v2/D5622AQEoFtfFtQr-GQ/feedshare-shrink_800/B56ZVsPIDMGQAg-/0/1741277660204?e=1778716800&v=beta&t=K-bChkmu9opCHJS4QZkkF9q3gs23gG8D6w4bKGCcpz8")
+```
+
+![](https://media.licdn.com/dms/image/v2/D5622AQEoFtfFtQr-GQ/feedshare-shrink_800/B56ZVsPIDMGQAg-/0/1741277660204?e=1778716800&v=beta&t=K-bChkmu9opCHJS4QZkkF9q3gs23gG8D6w4bKGCcpz8)<!-- -->
+
 </details>
 
 ------------------------------------------------------------------------
 
-# Back to the prop test!! Yay!!
-
-> Motivating question: For survey of 161 individuals on willingness to
-> serve as organ doners in the case of an accident, is there evidence
-> that responses rate differs from a 50/50 split, when 53 individuals
-> respond ‘no’ and 108 individuals respond ‘yes’?
-
-> Does the sample provide statistical evidence that there isn’t a 50-50
-> split in preference for donation? Or indiffernece (like people are
-> just answering randomly because they are not paying attention). Is
-> their answer equivelant to tossing a coin?
+# Back to exploring the prop test!! Yay!!
 
 {ggprop.test} can be installed as follows…
 
@@ -209,9 +232,21 @@ library(tidyverse)
 library(ggprop.test)
 ```
 
-<details>
+# Data and Scenarios
 
-# data and scenarios
+### scenario 1: organ donation
+
+> Motivating question: For survey of 161 individuals on willingness to
+> serve as organ doners in the case of an accident, is there evidence
+> that responses rate differs from a 50/50 split, when 53 individuals
+> respond ‘no’ and 108 individuals respond ‘yes’?
+
+> Does the sample provide statistical evidence that there isn’t a 50-50
+> split in preference for donation? Or indiffernece (like people are
+> just answering randomly because they are not paying attention). Is
+> their answer equivelant to tossing a coin?
+
+<details>
 
 “<https://www.isi-stats.com/isi/data/prelim/OrganDonor.txt>”
 
@@ -254,20 +289,7 @@ donor_data |>
 #>        53       108
 ```
 
-``` r
-donor_data |>
-  ggplot() + 
-  aes(x = decision) +
-  geom_stack() + 
-  geom_stack_label() + 
-  geom_support()
-```
-
-![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
-
-# How many trials where we are drawing from NULL, before we see something as far from .5 as .67?
-
-# Example \# 2
+### scenario 2: dolphins
 
 <details>
 
@@ -308,13 +330,21 @@ dolphin_data
 #> 16 Correct (1)
 ```
 
+> See too. ‘Fishermen talking to dolphins’
+> <https://www.youtube.com/watch?v=6MZqKfUMFn0>
+
+> Is the US a member of the ‘Agreement on the International Dolphin
+> Conservation Program?’ Agreement on the International Dolphin
+> Conservation Program -
+> <https://www.state.gov/international-dolphin-conservation-program>
+
 ------------------------------------------------------------------------
 
 # Visualizing raw data
 
 <details>
 
-### cloning statexpress functions
+#### cloning statexpress functions
 
 Some convenience functions from {statexpress} are used, because we want
 this to be a bit more self-contained at this point, so we just clone
@@ -361,7 +391,7 @@ qproto_update <- function (`_inherit`, default_aes_update = NULL, ...)
 }
 ```
 
-### And then define the functions…
+#### And then define the functions…
 
 ``` r
 # 1. layer stack of bricks
@@ -424,18 +454,12 @@ geom_support <- function(...){
 
 </details>
 
-------------------------------------------------------------------------
-
-Would we reflect: “I don’t think that the null is true. It’d be
-extremely rare to see something as big as .67 if the null were true. The
-observed balance (proportion) of .67 doesn’t look consistent with a
-population balance of .5”
-
-–
-
-Term of art: “we reject the null hypothesis”
-
 ``` r
+theme_minimal(paper = "grey25", 
+              ink = "whitesmoke" |> alpha(.9),
+              accent = "palevioletred2" |> alpha(.9)) |> 
+  set_theme()
+
 donor_data |> 
   ggplot() + 
   aes(x = decision) + 
@@ -466,7 +490,7 @@ dolphin_data |>
 dolphins_base_plot <- last_plot()
 ```
 
-# Calculating Prop, and allowing Null to be visualized
+# Calc and Viz the Proportion, allowing null to be visualized
 
 <details>
 
@@ -546,29 +570,49 @@ geom_prop_label <- function(...){
   }
 
 #' @export
-stamp_prop <- function(...){ 
-  qlayer(geom = qproto_update(ggplot2::GeomText, 
+stamp_prop <- function(value = .5, ...){ 
+  
+  # qlayer(geom = qproto_update(ggplot2::GeomText, 
+  #                             ggplot2::aes(size = 6, 
+  #                                          vjust = 1, 
+  #                                          color = ggplot2::from_theme(colour %||% ink))),
+  #        stat = qstat_panel(compute_panel_prop_asserted), 
+  #        data = data.frame(x = 1), 
+  #        inherit.aes = FALSE,
+  #        ...
+  #        )
+  
+  annotate(geom = qproto_update(ggplot2::GeomText, 
                               ggplot2::aes(size = 6, 
                                            vjust = 1, 
                                            color = ggplot2::from_theme(colour %||% ink))),
-         stat = qstat_panel(compute_panel_prop_asserted), 
-         data = data.frame(x = 1), 
-         inherit.aes = FALSE,
-         ...
-         )
+           x = value, y = 0, label = "^")
+  
+  
   }
   
 #' @export  
-stamp_prop_label <- function(...){  
-  qlayer(geom = qproto_update(ggplot2::GeomLabel, 
-                              ggplot2::aes(fill = ggplot2::from_theme(colour %||% paper), 
-                                  label.size = NA, vjust = 0, 
-                                  color = ggplot2::from_theme(colour %||% ink))),
-         stat = qstat_panel(compute_panel_prop_asserted_label), 
-         data = data.frame(x = 1), 
-         inherit.aes = FALSE,
-         ...
-         )
+stamp_prop_label <- function(value = .5, ...){  
+  # qlayer(geom = qproto_update(ggplot2::GeomLabel, 
+  #                             ggplot2::aes(fill = ggplot2::from_theme(colour %||% paper), 
+  #                                 label.size = NA, vjust = 0, 
+  #                                 color = ggplot2::from_theme(colour %||% ink))),
+  #        stat = qstat_panel(compute_panel_prop_asserted_label), 
+  #        data = data.frame(x = 1), 
+  #        inherit.aes = FALSE,
+  #        ...
+  #        )
+  
+  GeomLabelExtra <- qproto_update(ggplot2::GeomLabel, 
+                               ggplot2::aes(fill = ggplot2::from_theme(colour %||% paper), 
+                                   label.size = NA, vjust = 0, 
+                                   color = ggplot2::from_theme(colour %||% ink)))
+  
+  annotate(geom = GeomLabelExtra,
+           x = value, 
+           y = 0, 
+           label = value)
+  
   }
 ```
 
@@ -602,12 +646,13 @@ dolphins_base_plot +
 dolphins_balance_plot <- last_plot()
 ```
 
-## What’s observed under Null hypothesis?
+# Interlude: What individual outcomes *would* we observe under null hypothesis?
 
 <details>
 
 ``` r
-data_generate_plausible <- function(data, var, prob = .5){
+#' @export
+data_add_synth <- function(data, var, prob = .5){
   
   observed <- data |> 
     pull({{var}})
@@ -618,7 +663,7 @@ data_generate_plausible <- function(data, var, prob = .5){
     factor(levels = levels(observed))
   
   data |> 
-    mutate(plausible = generated)
+    mutate(synthetic = generated)
   
 }
 
@@ -655,22 +700,67 @@ ggplot_add.x_from_null <- function(object, plot, object_name) {
     factor(levels = levels(var))
   
   plot + labs(x = "plausible from null") + 
-  stamp_prop(value = mean(var |> as.numeric()) -1) + 
-  stamp_prop_label(value = mean(var |> as.numeric())-1) 
+  stamp_prop(value = mean(var |> as.numeric()) -1 ) + 
+  stamp_prop_label(value = mean(var |> as.numeric()) - 1) 
 
 }
 ```
 
 </details>
 
+How many trials where we are drawing from null, before we see something
+as far from .5 as .67?
+
 ``` r
-dolphins_balance_plot + 
-  x_from_null()
+dolphin_data |> 
+  data_add_synth(var = observed, prob = .5) 
+#> # A tibble: 16 × 2
+#>    observed        synthetic      
+#>    <fct>           <fct>          
+#>  1 Correct (1)     Not Correct (0)
+#>  2 Correct (1)     Correct (1)    
+#>  3 Correct (1)     Correct (1)    
+#>  4 Correct (1)     Correct (1)    
+#>  5 Correct (1)     Correct (1)    
+#>  6 Not Correct (0) Correct (1)    
+#>  7 Correct (1)     Not Correct (0)
+#>  8 Correct (1)     Not Correct (0)
+#>  9 Correct (1)     Correct (1)    
+#> 10 Correct (1)     Not Correct (0)
+#> 11 Correct (1)     Correct (1)    
+#> 12 Correct (1)     Correct (1)    
+#> 13 Correct (1)     Correct (1)    
+#> 14 Correct (1)     Not Correct (0)
+#> 15 Correct (1)     Correct (1)    
+#> 16 Correct (1)     Correct (1)
+
+
+
+dolphin_data |> 
+  data_add_synth(var = observed) |>
+  ggplot() + 
+  aes(x = synthetic) + 
+  geom_stack() + 
+  geom_stack_label() +
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop(.94)  # observed now for reference
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
-# Distributions for the Null…
+------------------------------------------------------------------------
+
+Would we reflect: “I don’t think that the null is true. It’d be
+extremely rare to see something as big as .67 if the null were true. The
+observed balance (proportion) of .67 doesn’t look consistent with a
+population balance of .5”
+
+–
+
+Term of art: “we reject the null hypothesis”
+
+# Distributions for the Null: What collections of hypothetical outcomes *could* we observe under null hypothesis?
 
 <details>
 
@@ -746,6 +836,14 @@ compute_dbinom <- function(data, scales, prob = .5){
   
 }
 
+#' @export
+geom_binomial_null <- function(...){
+  
+  qlayer(geom = GeomSegment,
+         stat = qstat(compute_dbinom))
+  
+  
+}
 
 #' @export
 geom_normal_prop_null <- function(...){
@@ -760,9 +858,7 @@ geom_normal_prop_null_sds <- function(...){
           stat = qstat_panel(compute_dnorm_prop_sds), 
           ...)
   }
-```
 
-``` r
 GeomTextBig <- ggproto("GeomTextBig", GeomText,
                        default_aes = 
                          modifyList(GeomText$default_aes,
@@ -787,53 +883,47 @@ stamp_eq_norm_prop <- function(x = I(.125),
 </details>
 
 ``` r
-dolphin_data |> 
-  ggplot() + 
-  aes(x = observed) + 
-  geom_stack() +
-  geom_support() + 
-  geom_stack_label() + 
-  geom_prop() + 
-  geom_prop_label() + 
-  stamp_prop() + 
-  stamp_prop_label() +
-  geom_segment(stat = qstat_panel(compute_dbinom))
+# donors w/ null distribution...
+donors_balance_plot +
+  geom_binomial_null()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
-  
-donor_data |> 
-  ggplot() + 
-  aes(x = decision) + 
-  geom_stack() +
-  geom_support() + 
-  geom_stack_label() + 
-  geom_prop() + 
-  geom_prop_label() + 
-  stamp_prop() + 
-  stamp_prop_label() +
-  geom_segment(stat = qstat_panel(compute_dbinom)) 
+
+
+# donnors with null normal approximation...
+donors_balance_plot +
+  geom_normal_prop_null() + 
+  geom_normal_prop_null_sds() +
+  stamp_eq_norm_prop()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-16-2.png)<!-- -->
 
-# Done! See below for all layers, and the introduction of packag for potential break-points along the prop test train of thought.
+``` r
 
-</details>
 
-------------------------------------------------------------------------
+# dolphins with binomial only...
+dolphins_balance_plot +
+  geom_binomial_null()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-16-3.png)<!-- -->
 
 ------------------------------------------------------------------------
 
 # Minimal Packaging
 
 ``` r
+# knitrExtra::chunk_names_get()
+
 knitrExtra::chunk_to_dir("statexpress")
-knitrExtra::chunk_to_dir("compute_for_prop_story")
-knitrExtra::chunk_to_dir("prop_poem_functions")
-knitrExtra::chunk_to_dir("stamp_eq_norm_prop")
+knitrExtra::chunk_to_dir("raw_data_viz")
+knitrExtra::chunk_to_dir("compute_prop_viz")
+knitrExtra::chunk_to_dir("gen_under_null")
+knitrExtra::chunk_to_dir("collections_null")
 ```
 
 ``` r
