@@ -15,6 +15,7 @@ ggprop.test
 - [Data and Scenarios](#data-and-scenarios)
   - [scenario 1: organ donation](#scenario-1-organ-donation)
   - [scenario 2: dolphins](#scenario-2-dolphins)
+- [More scenarios](#more-scenarios)
 - [Visualizing raw data](#visualizing-raw-data)
 - [Calc and Viz the Proportion, allowing null to be
   visualized](#calc-and-viz-the-proportion-allowing-null-to-be-visualized)
@@ -38,7 +39,29 @@ library(ggprop.test)
 If we discuss each of the snapshot points, we could write something like
 this:
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->
+
+    #> # A tibble: 16 × 2
+    #>    observed        synthetic      
+    #>    <fct>           <fct>          
+    #>  1 Correct (1)     Not Correct (0)
+    #>  2 Correct (1)     Correct (1)    
+    #>  3 Correct (1)     Not Correct (0)
+    #>  4 Correct (1)     Correct (1)    
+    #>  5 Correct (1)     Correct (1)    
+    #>  6 Not Correct (0) Correct (1)    
+    #>  7 Correct (1)     Not Correct (0)
+    #>  8 Correct (1)     Not Correct (0)
+    #>  9 Correct (1)     Not Correct (0)
+    #> 10 Correct (1)     Correct (1)    
+    #> 11 Correct (1)     Not Correct (0)
+    #> 12 Correct (1)     Not Correct (0)
+    #> 13 Correct (1)     Not Correct (0)
+    #> 14 Correct (1)     Not Correct (0)
+    #> 15 Correct (1)     Not Correct (0)
+    #> 16 Correct (1)     Not Correct (0)
+
+![](README_files/figure-gfm/unnamed-chunk-4-4.png)<!-- -->
 
 ## {ggprop.test} is teaching ‘mvp’ (minimum viable package) that translates the visual logic of the prop test to ggplot2.
 
@@ -148,17 +171,21 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-14-7.png
 #> │       ├── unnamed-chunk-14-8.png
 #> │       ├── unnamed-chunk-15-1.png
+#> │       ├── unnamed-chunk-15-2.png
 #> │       ├── unnamed-chunk-16-1.png
 #> │       ├── unnamed-chunk-16-2.png
 #> │       ├── unnamed-chunk-16-3.png
 #> │       ├── unnamed-chunk-17-1.png
 #> │       ├── unnamed-chunk-17-2.png
+#> │       ├── unnamed-chunk-17-3.png
 #> │       ├── unnamed-chunk-18-1.png
 #> │       ├── unnamed-chunk-18-2.png
 #> │       ├── unnamed-chunk-19-1.png
 #> │       ├── unnamed-chunk-3-1.png
 #> │       ├── unnamed-chunk-4-1.png
 #> │       ├── unnamed-chunk-4-2.png
+#> │       ├── unnamed-chunk-4-3.png
+#> │       ├── unnamed-chunk-4-4.png
 #> │       ├── unnamed-chunk-5-1.png
 #> │       ├── unnamed-chunk-5-2.png
 #> │       ├── unnamed-chunk-6-1.png
@@ -340,6 +367,37 @@ dolphin_data
 
 ------------------------------------------------------------------------
 
+# More scenarios
+
+``` r
+create_prop_data <- function(failure = "failure (0)", 
+                             success = "success (1)", 
+                             num_failure = 5, 
+                             num_success = 5, 
+                             var_name = "outcome"){
+  
+   outcome <-  c(failure, success) |> rep(c(num_failure, num_success)) |> sample()
+
+   tibble(outcome)
+  
+}
+```
+
+``` r
+create_prop_data() |> head()
+#> # A tibble: 6 × 1
+#>   outcome    
+#>   <chr>      
+#> 1 failure (0)
+#> 2 failure (0)
+#> 3 success (1)
+#> 4 failure (0)
+#> 5 success (1)
+#> 6 failure (0)
+```
+
+------------------------------------------------------------------------
+
 # Visualizing raw data
 
 <details>
@@ -468,7 +526,7 @@ donor_data |>
   geom_support()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 
@@ -483,7 +541,7 @@ dolphin_data |>
   geom_support()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
 
 ``` r
 
@@ -626,7 +684,7 @@ donor_base_plot +
   stamp_prop_label()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
 
@@ -639,7 +697,7 @@ dolphins_base_plot +
   stamp_prop_label()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-15-2.png)<!-- -->
 
 ``` r
 
@@ -658,7 +716,7 @@ data_add_synth <- function(data, var, prob = .5){
     pull({{var}})
   
   generated <- levels(observed) |>  # take two 
-    sample(size = nrow(data), replace = T) |> 
+    sample(size = nrow(data), replace = T, prob = c(1-prob, prob)) |> 
     # restore category ordering
     factor(levels = levels(observed))
   
@@ -717,22 +775,22 @@ dolphin_data |>
 #> # A tibble: 16 × 2
 #>    observed        synthetic      
 #>    <fct>           <fct>          
-#>  1 Correct (1)     Not Correct (0)
-#>  2 Correct (1)     Correct (1)    
-#>  3 Correct (1)     Correct (1)    
-#>  4 Correct (1)     Correct (1)    
+#>  1 Correct (1)     Correct (1)    
+#>  2 Correct (1)     Not Correct (0)
+#>  3 Correct (1)     Not Correct (0)
+#>  4 Correct (1)     Not Correct (0)
 #>  5 Correct (1)     Correct (1)    
-#>  6 Not Correct (0) Correct (1)    
-#>  7 Correct (1)     Not Correct (0)
+#>  6 Not Correct (0) Not Correct (0)
+#>  7 Correct (1)     Correct (1)    
 #>  8 Correct (1)     Not Correct (0)
-#>  9 Correct (1)     Correct (1)    
-#> 10 Correct (1)     Not Correct (0)
+#>  9 Correct (1)     Not Correct (0)
+#> 10 Correct (1)     Correct (1)    
 #> 11 Correct (1)     Correct (1)    
 #> 12 Correct (1)     Correct (1)    
 #> 13 Correct (1)     Correct (1)    
-#> 14 Correct (1)     Not Correct (0)
-#> 15 Correct (1)     Correct (1)    
-#> 16 Correct (1)     Correct (1)
+#> 14 Correct (1)     Correct (1)    
+#> 15 Correct (1)     Not Correct (0)
+#> 16 Correct (1)     Not Correct (0)
 
 
 
@@ -747,7 +805,7 @@ dolphin_data |>
   stamp_prop(.94)  # observed now for reference
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ------------------------------------------------------------------------
 
@@ -813,6 +871,7 @@ compute_dnorm_prop_sds <- function(data, scales, null = .5,
 
 
 # Compute from ma206 data
+#' @export
 tidy_dbinom <- function(single_trial_prob = .5, num_trials = 10){
 
   num_successes <- 0:num_trials
@@ -829,7 +888,7 @@ compute_dbinom <- function(data, scales, prob = .5){
   
   tidy_dbinom(single_trial_prob = .5, 
               num_trials = num_trials) |> 
-    mutate(x = num_successes/max(num_successes),
+    mutate(x = num_successes/max(num_trials),
            y = num_trials/2*probability/max(probability),
            yend = 0,
            xend = x) 
@@ -840,7 +899,7 @@ compute_dbinom <- function(data, scales, prob = .5){
 geom_binomial_null <- function(...){
   
   qlayer(geom = GeomSegment,
-         stat = qstat(compute_dbinom))
+         stat = qstat_panel(compute_dbinom))
   
   
 }
@@ -883,12 +942,45 @@ stamp_eq_norm_prop <- function(x = I(.125),
 </details>
 
 ``` r
+# dolphins with binomial only...
+dolphins_balance_plot +
+  geom_binomial_null()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+
+tidy_dbinom(num_trials = 16)
+#> # A tibble: 17 × 4
+#>    num_successes probability single_trial_prob num_trials
+#>            <int>       <dbl>             <dbl>      <dbl>
+#>  1             0   0.0000153               0.5         16
+#>  2             1   0.000244                0.5         16
+#>  3             2   0.00183                 0.5         16
+#>  4             3   0.00854                 0.5         16
+#>  5             4   0.0278                  0.5         16
+#>  6             5   0.0667                  0.5         16
+#>  7             6   0.122                   0.5         16
+#>  8             7   0.175                   0.5         16
+#>  9             8   0.196                   0.5         16
+#> 10             9   0.175                   0.5         16
+#> 11            10   0.122                   0.5         16
+#> 12            11   0.0667                  0.5         16
+#> 13            12   0.0278                  0.5         16
+#> 14            13   0.00854                 0.5         16
+#> 15            14   0.00183                 0.5         16
+#> 16            15   0.000244                0.5         16
+#> 17            16   0.0000153               0.5         16
+```
+
+``` r
 # donors w/ null distribution...
 donors_balance_plot +
   geom_binomial_null()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 
@@ -900,17 +992,7 @@ donors_balance_plot +
   stamp_eq_norm_prop()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-2.png)<!-- -->
-
-``` r
-
-
-# dolphins with binomial only...
-dolphins_balance_plot +
-  geom_binomial_null()
-```
-
-![](README_files/figure-gfm/unnamed-chunk-16-3.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
 
 ------------------------------------------------------------------------
 

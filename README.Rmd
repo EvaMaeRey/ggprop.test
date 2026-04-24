@@ -79,6 +79,33 @@ donor_data |>
   geom_prop() +
   stamp_prop(.67)
 
+dolphin_data |>
+  ggplot() + 
+  aes(x = observed) + 
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_prop() + 
+  geom_prop_label() +
+  stamp_prop(.5) +
+  stamp_prop_label(.5) +
+  geom_binomial_null()
+
+dolphin_data |> data_add_synth(var = observed)
+
+donor_data |>
+  ggplot() + 
+  aes(x = decision) + 
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_prop() + 
+  geom_prop_label() +
+  stamp_prop(.5) +
+  stamp_prop_label(.5) +
+  geom_normal_prop_null() + 
+  geom_normal_prop_null_sds()
+
+
+
 ```
 
 
@@ -136,8 +163,6 @@ knitr::include_graphics("https://media.licdn.com/dms/image/v2/D5622AQEoFtfFtQr-G
 
 # Back to exploring the prop test!! Yay!!
 
-
-
 {ggprop.test} can be installed as follows...
 
 ```{r, eval = F}
@@ -193,13 +218,6 @@ donor_data |>
 ```
 
 
-
-
-
-
-
-
-
 ### scenario 2: dolphins
 
 
@@ -226,6 +244,32 @@ dolphin_data
 > See too. 'Fishermen talking to dolphins' https://www.youtube.com/watch?v=6MZqKfUMFn0
 
 > Is the US a member of the 'Agreement on the International Dolphin Conservation Program?' Agreement on the International Dolphin Conservation Program - https://www.state.gov/international-dolphin-conservation-program
+
+---
+
+# More scenarios
+
+```{r create_prop_data}
+create_prop_data <- function(failure = "failure (0)", 
+                             success = "success (1)", 
+                             num_failure = 5, 
+                             num_success = 5, 
+                             var_name = "outcome"){
+  
+   outcome <-  c(failure, success) |> rep(c(num_failure, num_success)) |> sample()
+
+   tibble(outcome)
+  
+}
+```
+
+
+
+```{r}
+create_prop_data() |> head()
+```
+
+
 
 ---
 
@@ -536,7 +580,7 @@ data_add_synth <- function(data, var, prob = .5){
     pull({{var}})
   
   generated <- levels(observed) |>  # take two 
-    sample(size = nrow(data), replace = T) |> 
+    sample(size = nrow(data), replace = T, prob = c(1-prob, prob)) |> 
     # restore category ordering
     factor(levels = levels(observed))
   
@@ -670,6 +714,7 @@ compute_dnorm_prop_sds <- function(data, scales, null = .5,
 
 
 # Compute from ma206 data
+#' @export
 tidy_dbinom <- function(single_trial_prob = .5, num_trials = 10){
 
   num_successes <- 0:num_trials
@@ -686,7 +731,7 @@ compute_dbinom <- function(data, scales, prob = .5){
   
   tidy_dbinom(single_trial_prob = .5, 
               num_trials = num_trials) |> 
-    mutate(x = num_successes/max(num_successes),
+    mutate(x = num_successes/max(num_trials),
            y = num_trials/2*probability/max(probability),
            yend = 0,
            xend = x) 
@@ -697,7 +742,7 @@ compute_dbinom <- function(data, scales, prob = .5){
 geom_binomial_null <- function(...){
   
   qlayer(geom = GeomSegment,
-         stat = qstat(compute_dbinom))
+         stat = qstat_panel(compute_dbinom))
   
   
 }
@@ -741,6 +786,16 @@ stamp_eq_norm_prop <- function(x = I(.125),
 </details>
 
 
+```{r}
+# dolphins with binomial only...
+dolphins_balance_plot +
+  geom_binomial_null()
+
+tidy_dbinom(num_trials = 16)
+
+```
+
+
 
 ```{r}
 # donors w/ null distribution...
@@ -755,9 +810,7 @@ donors_balance_plot +
   stamp_eq_norm_prop()
 
 
-# dolphins with binomial only...
-dolphins_balance_plot +
-  geom_binomial_null()
+
 ```
 
 
