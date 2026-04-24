@@ -39,29 +39,7 @@ library(ggprop.test)
 If we discuss each of the snapshot points, we could write something like
 this:
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->
-
-    #> # A tibble: 16 × 2
-    #>    observed        synthetic      
-    #>    <fct>           <fct>          
-    #>  1 Correct (1)     Not Correct (0)
-    #>  2 Correct (1)     Correct (1)    
-    #>  3 Correct (1)     Not Correct (0)
-    #>  4 Correct (1)     Correct (1)    
-    #>  5 Correct (1)     Correct (1)    
-    #>  6 Not Correct (0) Correct (1)    
-    #>  7 Correct (1)     Not Correct (0)
-    #>  8 Correct (1)     Not Correct (0)
-    #>  9 Correct (1)     Not Correct (0)
-    #> 10 Correct (1)     Correct (1)    
-    #> 11 Correct (1)     Not Correct (0)
-    #> 12 Correct (1)     Not Correct (0)
-    #> 13 Correct (1)     Not Correct (0)
-    #> 14 Correct (1)     Not Correct (0)
-    #> 15 Correct (1)     Not Correct (0)
-    #> 16 Correct (1)     Not Correct (0)
-
-![](README_files/figure-gfm/unnamed-chunk-4-4.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ## {ggprop.test} is teaching ‘mvp’ (minimum viable package) that translates the visual logic of the prop test to ggplot2.
 
@@ -142,6 +120,9 @@ fs::dir_tree()
 #> ├── README_files
 #> │   └── figure-gfm
 #> │       ├── prop_poem-1.png
+#> │       ├── test_interlude-1.png
+#> │       ├── test_interlude-2.png
+#> │       ├── test_interlude-3.png
 #> │       ├── unnamed-chunk-10-1.png
 #> │       ├── unnamed-chunk-10-2.png
 #> │       ├── unnamed-chunk-10-3.png
@@ -181,6 +162,7 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-18-1.png
 #> │       ├── unnamed-chunk-18-2.png
 #> │       ├── unnamed-chunk-19-1.png
+#> │       ├── unnamed-chunk-19-2.png
 #> │       ├── unnamed-chunk-3-1.png
 #> │       ├── unnamed-chunk-4-1.png
 #> │       ├── unnamed-chunk-4-2.png
@@ -188,6 +170,7 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-4-4.png
 #> │       ├── unnamed-chunk-5-1.png
 #> │       ├── unnamed-chunk-5-2.png
+#> │       ├── unnamed-chunk-5-3.png
 #> │       ├── unnamed-chunk-6-1.png
 #> │       ├── unnamed-chunk-6-2.png
 #> │       ├── unnamed-chunk-7-1.png
@@ -709,16 +692,26 @@ dolphins_balance_plot <- last_plot()
 <details>
 
 ``` r
+#' @export 
+to_synthetic <- function(x, prob = .5){
+  
+  levels(x) |>  # take two 
+    sample(size = length(x), 
+           replace = T, 
+           prob = c(1-prob, prob)) |> 
+    # restore category ordering
+    factor(levels = levels(x))
+  
+}
+
+
 #' @export
 data_add_synth <- function(data, var, prob = .5){
   
-  observed <- data |> 
+  x <- data |> 
     pull({{var}})
   
-  generated <- levels(observed) |>  # take two 
-    sample(size = nrow(data), replace = T, prob = c(1-prob, prob)) |> 
-    # restore category ordering
-    factor(levels = levels(observed))
+  generated <- to_synthetic(x, prob = prob)
   
   data |> 
     mutate(synthetic = generated)
@@ -726,42 +719,42 @@ data_add_synth <- function(data, var, prob = .5){
 }
 
 
-
-#' @export
-x_from_null <- function(data = NULL, prob = .5) {
-
-  structure(
-    list(prob = prob), 
-    class = "x_from_null"
-    )
-
-}
-
-
-#' @import ggplot2
-#' @importFrom ggplot2 ggplot_add
-#' @export
-ggplot_add.x_from_null <- function(object, plot, object_name) {
-  
-  xname <- plot@mapping |> as.character() |> str_remove("~")
-  
-  xname
-  
-  var <- plot$data |> pull(xname)
-  
-  plot$data[xname] <-  
-     sample(levels(var), 
-            size = length(var), 
-            replace = T, prob = c(1-object$prob, object$prob)
-            ) |> 
-     # restore category ordering
-    factor(levels = levels(var))
-  
-  plot + labs(x = "plausible from null") + 
-  stamp_prop(value = mean(var |> as.numeric()) -1 ) + 
-  stamp_prop_label(value = mean(var |> as.numeric()) - 1) 
-
-}
+# 
+# #' @export
+# x_from_null <- function(data = NULL, prob = .5) {
+# 
+#   structure(
+#     list(prob = prob), 
+#     class = "x_from_null"
+#     )
+# 
+# }
+# 
+# 
+# #' @import ggplot2
+# #' @importFrom ggplot2 ggplot_add
+# #' @export
+# ggplot_add.x_from_null <- function(object, plot, object_name) {
+#   
+#   xname <- plot@mapping |> as.character() |> str_remove("~")
+#   
+#   xname
+#   
+#   var <- plot$data |> pull(xname)
+#   
+#   plot$data[xname] <-  
+#      sample(levels(var), 
+#             size = length(var), 
+#             replace = T, prob = c(1-object$prob, object$prob)
+#             ) |> 
+#      # restore category ordering
+#     factor(levels = levels(var))
+#   
+#   plot + labs(x = "plausible from null") + 
+#   stamp_prop(value = mean(var |> as.numeric()) -1 ) + 
+#   stamp_prop_label(value = mean(var |> as.numeric()) - 1) 
+# 
+# }
 ```
 
 </details>
@@ -792,12 +785,10 @@ dolphin_data |>
 #> 15 Correct (1)     Not Correct (0)
 #> 16 Correct (1)     Not Correct (0)
 
-
-
 dolphin_data |> 
-  data_add_synth(var = observed) |>
+  mutate(synth = to_synthetic(observed)) |>
   ggplot() + 
-  aes(x = synthetic) + 
+  aes(x = synth) + 
   geom_stack() + 
   geom_stack_label() +
   geom_prop() + 
@@ -838,7 +829,7 @@ compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5
   data.frame(x = q) |>
     dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
-    dplyr::mutate(y = .55*n_max*height/height_max) |>  # This is a bit fragile...
+    dplyr::mutate(y = .5*n*height/height_max) |>  # This is a bit fragile...
     dplyr::mutate(xend = x,
            yend = 0) |> 
     # @teunbrand ggplot2::GeomArea$setup_data() requires a group column. Your panel computation does not preserve groups, but it should.
@@ -862,7 +853,7 @@ compute_dnorm_prop_sds <- function(data, scales, null = .5,
   data.frame(x = q) |>
     dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
-    dplyr::mutate(y = .55*n_max*height/height_max) |> # This is a bit fragile...
+    dplyr::mutate(y = .5*n*height/height_max) |> # This is a bit fragile...
     dplyr::mutate(xend = x,
            yend = 0)
 
@@ -888,7 +879,7 @@ compute_dbinom <- function(data, scales, prob = .5){
   
   tidy_dbinom(single_trial_prob = .5, 
               num_trials = num_trials) |> 
-    mutate(x = num_successes/max(num_trials),
+    mutate(x = num_successes/num_trials,
            y = num_trials/2*probability/max(probability),
            yend = 0,
            xend = x) 
@@ -951,27 +942,28 @@ dolphins_balance_plot +
 
 ``` r
 
-tidy_dbinom(num_trials = 16)
-#> # A tibble: 17 × 4
-#>    num_successes probability single_trial_prob num_trials
-#>            <int>       <dbl>             <dbl>      <dbl>
-#>  1             0   0.0000153               0.5         16
-#>  2             1   0.000244                0.5         16
-#>  3             2   0.00183                 0.5         16
-#>  4             3   0.00854                 0.5         16
-#>  5             4   0.0278                  0.5         16
-#>  6             5   0.0667                  0.5         16
-#>  7             6   0.122                   0.5         16
-#>  8             7   0.175                   0.5         16
-#>  9             8   0.196                   0.5         16
-#> 10             9   0.175                   0.5         16
-#> 11            10   0.122                   0.5         16
-#> 12            11   0.0667                  0.5         16
-#> 13            12   0.0278                  0.5         16
-#> 14            13   0.00854                 0.5         16
-#> 15            14   0.00183                 0.5         16
-#> 16            15   0.000244                0.5         16
-#> 17            16   0.0000153               0.5         16
+tidy_dbinom(num_trials = 16) |>
+  mutate(prop = num_successes/16)
+#> # A tibble: 17 × 5
+#>    num_successes probability single_trial_prob num_trials   prop
+#>            <int>       <dbl>             <dbl>      <dbl>  <dbl>
+#>  1             0   0.0000153               0.5         16 0     
+#>  2             1   0.000244                0.5         16 0.0625
+#>  3             2   0.00183                 0.5         16 0.125 
+#>  4             3   0.00854                 0.5         16 0.188 
+#>  5             4   0.0278                  0.5         16 0.25  
+#>  6             5   0.0667                  0.5         16 0.312 
+#>  7             6   0.122                   0.5         16 0.375 
+#>  8             7   0.175                   0.5         16 0.438 
+#>  9             8   0.196                   0.5         16 0.5   
+#> 10             9   0.175                   0.5         16 0.562 
+#> 11            10   0.122                   0.5         16 0.625 
+#> 12            11   0.0667                  0.5         16 0.688 
+#> 13            12   0.0278                  0.5         16 0.75  
+#> 14            13   0.00854                 0.5         16 0.812 
+#> 15            14   0.00183                 0.5         16 0.875 
+#> 16            15   0.000244                0.5         16 0.938 
+#> 17            16   0.0000153               0.5         16 1
 ```
 
 ``` r

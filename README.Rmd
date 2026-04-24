@@ -68,8 +68,11 @@ library(patchwork)
    (i.e. how many standard deviations fit between .5 and .67)"
                              ) &
   ggchalkboard:::theme_chalkboard(base_size = 14) 
+```
 
 
+
+```{r test_interlude, include = F}
 # and the interlude...
 donor_data |>
   ggprop.test::data_add_synth(var = decision) |>
@@ -103,9 +106,6 @@ donor_data |>
   stamp_prop_label(.5) +
   geom_normal_prop_null() + 
   geom_normal_prop_null_sds()
-
-
-
 ```
 
 
@@ -573,16 +573,26 @@ dolphins_balance_plot <- last_plot()
 <details>
 
 ```{r gen_under_null, eval = T}
+#' @export 
+to_synthetic <- function(x, prob = .5){
+  
+  levels(x) |>  # take two 
+    sample(size = length(x), 
+           replace = T, 
+           prob = c(1-prob, prob)) |> 
+    # restore category ordering
+    factor(levels = levels(x))
+  
+}
+
+
 #' @export
 data_add_synth <- function(data, var, prob = .5){
   
-  observed <- data |> 
+  x <- data |> 
     pull({{var}})
   
-  generated <- levels(observed) |>  # take two 
-    sample(size = nrow(data), replace = T, prob = c(1-prob, prob)) |> 
-    # restore category ordering
-    factor(levels = levels(observed))
+  generated <- to_synthetic(x, prob = prob)
   
   data |> 
     mutate(synthetic = generated)
@@ -590,42 +600,42 @@ data_add_synth <- function(data, var, prob = .5){
 }
 
 
-
-#' @export
-x_from_null <- function(data = NULL, prob = .5) {
-
-  structure(
-    list(prob = prob), 
-    class = "x_from_null"
-    )
-
-}
-
-
-#' @import ggplot2
-#' @importFrom ggplot2 ggplot_add
-#' @export
-ggplot_add.x_from_null <- function(object, plot, object_name) {
-  
-  xname <- plot@mapping |> as.character() |> str_remove("~")
-  
-  xname
-  
-  var <- plot$data |> pull(xname)
-  
-  plot$data[xname] <-  
-     sample(levels(var), 
-            size = length(var), 
-            replace = T, prob = c(1-object$prob, object$prob)
-            ) |> 
-     # restore category ordering
-    factor(levels = levels(var))
-  
-  plot + labs(x = "plausible from null") + 
-  stamp_prop(value = mean(var |> as.numeric()) -1 ) + 
-  stamp_prop_label(value = mean(var |> as.numeric()) - 1) 
-
-}
+# 
+# #' @export
+# x_from_null <- function(data = NULL, prob = .5) {
+# 
+#   structure(
+#     list(prob = prob), 
+#     class = "x_from_null"
+#     )
+# 
+# }
+# 
+# 
+# #' @import ggplot2
+# #' @importFrom ggplot2 ggplot_add
+# #' @export
+# ggplot_add.x_from_null <- function(object, plot, object_name) {
+#   
+#   xname <- plot@mapping |> as.character() |> str_remove("~")
+#   
+#   xname
+#   
+#   var <- plot$data |> pull(xname)
+#   
+#   plot$data[xname] <-  
+#      sample(levels(var), 
+#             size = length(var), 
+#             replace = T, prob = c(1-object$prob, object$prob)
+#             ) |> 
+#      # restore category ordering
+#     factor(levels = levels(var))
+#   
+#   plot + labs(x = "plausible from null") + 
+#   stamp_prop(value = mean(var |> as.numeric()) -1 ) + 
+#   stamp_prop_label(value = mean(var |> as.numeric()) - 1) 
+# 
+# }
 
 ```
 
@@ -637,12 +647,10 @@ How many trials where we are drawing from null, before we see something as far f
 dolphin_data |> 
   data_add_synth(var = observed, prob = .5) 
 
-
-
 dolphin_data |> 
-  data_add_synth(var = observed) |>
+  mutate(synth = to_synthetic(observed)) |>
   ggplot() + 
-  aes(x = synthetic) + 
+  aes(x = synth) + 
   geom_stack() + 
   geom_stack_label() +
   geom_prop() + 
@@ -681,7 +689,7 @@ compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5
   data.frame(x = q) |>
     dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
-    dplyr::mutate(y = .55*n_max*height/height_max) |>  # This is a bit fragile...
+    dplyr::mutate(y = .5*n*height/height_max) |>  # This is a bit fragile...
     dplyr::mutate(xend = x,
            yend = 0) |> 
     # @teunbrand ggplot2::GeomArea$setup_data() requires a group column. Your panel computation does not preserve groups, but it should.
@@ -705,7 +713,7 @@ compute_dnorm_prop_sds <- function(data, scales, null = .5,
   data.frame(x = q) |>
     dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
-    dplyr::mutate(y = .55*n_max*height/height_max) |> # This is a bit fragile...
+    dplyr::mutate(y = .5*n*height/height_max) |> # This is a bit fragile...
     dplyr::mutate(xend = x,
            yend = 0)
 
@@ -731,7 +739,7 @@ compute_dbinom <- function(data, scales, prob = .5){
   
   tidy_dbinom(single_trial_prob = .5, 
               num_trials = num_trials) |> 
-    mutate(x = num_successes/max(num_trials),
+    mutate(x = num_successes/num_trials,
            y = num_trials/2*probability/max(probability),
            yend = 0,
            xend = x) 
@@ -791,7 +799,8 @@ stamp_eq_norm_prop <- function(x = I(.125),
 dolphins_balance_plot +
   geom_binomial_null()
 
-tidy_dbinom(num_trials = 16)
+tidy_dbinom(num_trials = 16) |>
+  mutate(prop = num_successes/16)
 
 ```
 
