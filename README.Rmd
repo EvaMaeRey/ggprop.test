@@ -202,6 +202,10 @@ donor_data <- rep(c("donor (1)", "not (0)"), c(108,53)) |>
 head(donor_data)
 
 usethis::use_data(donor_data, overwrite = T)
+
+donor_data |> 
+  count(decision) |> 
+  mutate(prop = n/sum(n))
 ```
 
 </details>
@@ -233,23 +237,53 @@ dolphin_data <- rep(c("Correct (1)",
   dplyr::mutate(observed = fct_rev(observed))
 
 usethis::use_data(dolphin_data, overwrite = T)
+
+
+
 ```
 
 </details>
 
 ```{r}
 dolphin_data
+
 ```
 
 > See too. 'Fishermen talking to dolphins' https://www.youtube.com/watch?v=6MZqKfUMFn0
 
 > Is the US a member of the 'Agreement on the International Dolphin Conservation Program?' Agreement on the International Dolphin Conservation Program - https://www.state.gov/international-dolphin-conservation-program
 
+
+### scenario 3: Rock paper scissors
+
+<details>
+
+```{r}
+set.seed(12345)
+scissors_data <- rep(c("not scissors (0)", "scissors (1)"), 
+                     c(16, 4)) |> 
+  sample() |>
+  tibble(thrown = _) |>
+  dplyr::mutate(thrown = factor(thrown))
+
+
+usethis::use_data(scissors_data, overwrite = T)
+```
+
+</details>
+
+
+```{r}
+scissors_data
+```
+
+
 ---
 
-# More scenarios
+### On demand scenarios
 
 ```{r create_prop_data}
+#' @export
 create_prop_data <- function(failure = "failure (0)", 
                              success = "success (1)", 
                              num_failure = 5, 
@@ -265,8 +299,17 @@ create_prop_data <- function(failure = "failure (0)",
 
 
 
+"Kissing right" example... https://www.isi-stats.com/isi/labs/lab3/lab3_1.html
+
+'In the actual study, Dr. Güntürkün observed 80 of the 124 couples in his sample turn to the right.'
+
 ```{r}
 create_prop_data() |> head()
+
+create_prop_data(failure = "not kiss right (0)",
+                 success = "kiss right (1)",
+                 num_failure = 124-80,
+                 num_success = 80)
 ```
 
 
@@ -416,6 +459,15 @@ dolphin_data |>
   geom_support()
 
 dolphins_base_plot <- last_plot()
+
+scissors_data |>
+  ggplot() + 
+  aes(x = thrown) +
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_support()
+
+scissors_base_plot <- last_plot()
 ```
 
 
@@ -566,6 +618,13 @@ dolphins_base_plot +
   stamp_prop_label()
 
 dolphins_balance_plot <- last_plot()
+
+scissors_base_plot + 
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop(.33) + 
+  stamp_prop_label(.33)
+
 ```
 
 # Interlude: What individual outcomes *would* we observe under null hypothesis?
@@ -655,8 +714,32 @@ dolphin_data |>
   geom_stack_label() +
   geom_prop() + 
   geom_prop_label() + 
-  stamp_prop(.94)  # observed now for reference
+  stamp_prop(.94) + # observed now for reference
+  stamp_prop_label(.94)
+  
+  
+donor_data |> 
+  mutate(synth = to_synthetic(decision)) |>
+  ggplot() + 
+  aes(x = synth) + 
+  geom_stack() + 
+  geom_stack_label() +
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop(.67) + # observed now for reference
+  stamp_prop_label(.67)  
 
+
+scissors_data |> 
+  mutate(synth = to_synthetic(thrown)) |>
+  ggplot() + 
+  aes(x = synth) + 
+  geom_stack() + 
+  geom_stack_label() +
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop(.25) + # observed now for reference
+  stamp_prop_label(.25)  
 ```
 
 ---
@@ -769,17 +852,17 @@ geom_normal_prop_null_sds <- function(...){
           ...)
   }
 
-GeomTextBig <- ggproto("GeomTextBig", GeomText,
+GeomTextBig <- ggplot2::ggproto("GeomTextBig", ggplot2::GeomText,
                        default_aes = 
-                         modifyList(GeomText$default_aes,
-                                    aes(size = from_theme(fontsize))))
+                         modifyList(ggplot2::GeomText$default_aes,
+                                    ggplot2::aes(size = ggplot2::from_theme(fontsize))))
 
 
 #' @export
 stamp_eq_norm_prop <- function(x = I(.125),
     y = I(.8), ...){
   
-  annotate(
+  ggplot2::annotate(
     "text",
     x = x,
     y = y,
@@ -811,21 +894,28 @@ tidy_dbinom(num_trials = 16) |>
 donors_balance_plot +
   geom_binomial_null()
 
-
-# donnors with null normal approximation...
+# donors with null normal approximation...
 donors_balance_plot +
   geom_normal_prop_null() + 
   geom_normal_prop_null_sds() +
   stamp_eq_norm_prop()
-
-
-
 ```
 
 
 
+```{r}
+donor_data |>
+  ggplot() + 
+  aes(x = decision |> 
+        as.logical() |> 
+        as.numeric()) + 
+  geom_normal_prop_null() + 
+  geom_normal_prop_null_sds() + 
+  stamp_prop(.67) + 
+  stamp_prop_label(.67)
+```
 
-
+Exactly how many standard deviations away from the mean are you. 
 
 
 
@@ -846,6 +936,7 @@ knitrExtra::chunk_to_dir("raw_data_viz")
 knitrExtra::chunk_to_dir("compute_prop_viz")
 knitrExtra::chunk_to_dir("gen_under_null")
 knitrExtra::chunk_to_dir("collections_null")
+knitrExtra::chunk_to_dir("create_prop_data")
 ```
 
 ```{r, eval = F}

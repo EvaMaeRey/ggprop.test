@@ -15,7 +15,8 @@ ggprop.test
 - [Data and Scenarios](#data-and-scenarios)
   - [scenario 1: organ donation](#scenario-1-organ-donation)
   - [scenario 2: dolphins](#scenario-2-dolphins)
-- [More scenarios](#more-scenarios)
+  - [scenario 3: Rock paper scissors](#scenario-3-rock-paper-scissors)
+  - [On demand scenarios](#on-demand-scenarios)
 - [Visualizing raw data](#visualizing-raw-data)
 - [Calc and Viz the Proportion, allowing null to be
   visualized](#calc-and-viz-the-proportion-allowing-null-to-be-visualized)
@@ -153,6 +154,7 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-14-8.png
 #> │       ├── unnamed-chunk-15-1.png
 #> │       ├── unnamed-chunk-15-2.png
+#> │       ├── unnamed-chunk-15-3.png
 #> │       ├── unnamed-chunk-16-1.png
 #> │       ├── unnamed-chunk-16-2.png
 #> │       ├── unnamed-chunk-16-3.png
@@ -161,8 +163,11 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-17-3.png
 #> │       ├── unnamed-chunk-18-1.png
 #> │       ├── unnamed-chunk-18-2.png
+#> │       ├── unnamed-chunk-18-3.png
 #> │       ├── unnamed-chunk-19-1.png
 #> │       ├── unnamed-chunk-19-2.png
+#> │       ├── unnamed-chunk-20-1.png
+#> │       ├── unnamed-chunk-20-2.png
 #> │       ├── unnamed-chunk-3-1.png
 #> │       ├── unnamed-chunk-4-1.png
 #> │       ├── unnamed-chunk-4-2.png
@@ -193,7 +198,8 @@ fs::dir_tree()
 #> │       └── unnamed-chunk-9-8.png
 #> ├── data
 #> │   ├── dolphin_data.rda
-#> │   └── donor_data.rda
+#> │   ├── donor_data.rda
+#> │   └── scissors_data.rda
 #> ├── ggprop.test.Rproj
 #> └── man
 ```
@@ -281,6 +287,15 @@ head(donor_data)
 #> 6 not (0)
 
 usethis::use_data(donor_data, overwrite = T)
+
+donor_data |> 
+  count(decision) |> 
+  mutate(prop = n/sum(n))
+#> # A tibble: 2 × 3
+#>   decision      n  prop
+#>   <fct>     <int> <dbl>
+#> 1 not (0)      53 0.329
+#> 2 donor (1)   108 0.671
 ```
 
 </details>
@@ -348,9 +363,54 @@ dolphin_data
 > Conservation Program -
 > <https://www.state.gov/international-dolphin-conservation-program>
 
+### scenario 3: Rock paper scissors
+
+<details>
+
+``` r
+set.seed(12345)
+scissors_data <- rep(c("not scissors (0)", "scissors (1)"), 
+                     c(16, 4)) |> 
+  sample() |>
+  tibble(thrown = _) |>
+  dplyr::mutate(thrown = factor(thrown))
+
+
+usethis::use_data(scissors_data, overwrite = T)
+```
+
+</details>
+
+``` r
+scissors_data
+#> # A tibble: 20 × 1
+#>    thrown          
+#>    <fct>           
+#>  1 not scissors (0)
+#>  2 scissors (1)    
+#>  3 not scissors (0)
+#>  4 not scissors (0)
+#>  5 scissors (1)    
+#>  6 not scissors (0)
+#>  7 not scissors (0)
+#>  8 not scissors (0)
+#>  9 scissors (1)    
+#> 10 not scissors (0)
+#> 11 not scissors (0)
+#> 12 not scissors (0)
+#> 13 not scissors (0)
+#> 14 not scissors (0)
+#> 15 not scissors (0)
+#> 16 not scissors (0)
+#> 17 not scissors (0)
+#> 18 scissors (1)    
+#> 19 not scissors (0)
+#> 20 not scissors (0)
+```
+
 ------------------------------------------------------------------------
 
-# More scenarios
+### On demand scenarios
 
 ``` r
 create_prop_data <- function(failure = "failure (0)", 
@@ -366,17 +426,42 @@ create_prop_data <- function(failure = "failure (0)",
 }
 ```
 
+“Kissing right” example…
+<https://www.isi-stats.com/isi/labs/lab3/lab3_1.html>
+
+‘In the actual study, Dr. Güntürkün observed 80 of the 124 couples in
+his sample turn to the right.’
+
 ``` r
 create_prop_data() |> head()
 #> # A tibble: 6 × 1
 #>   outcome    
 #>   <chr>      
-#> 1 failure (0)
+#> 1 success (1)
 #> 2 failure (0)
-#> 3 success (1)
-#> 4 failure (0)
+#> 3 failure (0)
+#> 4 success (1)
 #> 5 success (1)
-#> 6 failure (0)
+#> 6 success (1)
+
+create_prop_data(failure = "not kiss right (0)",
+                 success = "kiss right (1)",
+                 num_failure = 124-80,
+                 num_success = 80)
+#> # A tibble: 124 × 1
+#>    outcome           
+#>    <chr>             
+#>  1 not kiss right (0)
+#>  2 not kiss right (0)
+#>  3 not kiss right (0)
+#>  4 kiss right (1)    
+#>  5 kiss right (1)    
+#>  6 not kiss right (0)
+#>  7 not kiss right (0)
+#>  8 not kiss right (0)
+#>  9 kiss right (1)    
+#> 10 kiss right (1)    
+#> # ℹ 114 more rows
 ```
 
 ------------------------------------------------------------------------
@@ -509,7 +594,7 @@ donor_data |>
   geom_support()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
 
@@ -524,11 +609,25 @@ dolphin_data |>
   geom_support()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-16-2.png)<!-- -->
 
 ``` r
 
 dolphins_base_plot <- last_plot()
+
+scissors_data |>
+  ggplot() + 
+  aes(x = thrown) +
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_support()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-16-3.png)<!-- -->
+
+``` r
+
+scissors_base_plot <- last_plot()
 ```
 
 # Calc and Viz the Proportion, allowing null to be visualized
@@ -667,7 +766,7 @@ donor_base_plot +
   stamp_prop_label()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
 
@@ -680,12 +779,20 @@ dolphins_base_plot +
   stamp_prop_label()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-15-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->
 
 ``` r
 
 dolphins_balance_plot <- last_plot()
+
+scissors_base_plot + 
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop(.33) + 
+  stamp_prop_label(.33)
 ```
+
+![](README_files/figure-gfm/unnamed-chunk-17-3.png)<!-- -->
 
 # Interlude: What individual outcomes *would* we observe under null hypothesis?
 
@@ -769,21 +876,21 @@ dolphin_data |>
 #>    observed        synthetic      
 #>    <fct>           <fct>          
 #>  1 Correct (1)     Correct (1)    
-#>  2 Correct (1)     Not Correct (0)
+#>  2 Correct (1)     Correct (1)    
 #>  3 Correct (1)     Not Correct (0)
 #>  4 Correct (1)     Not Correct (0)
 #>  5 Correct (1)     Correct (1)    
-#>  6 Not Correct (0) Not Correct (0)
+#>  6 Not Correct (0) Correct (1)    
 #>  7 Correct (1)     Correct (1)    
-#>  8 Correct (1)     Not Correct (0)
+#>  8 Correct (1)     Correct (1)    
 #>  9 Correct (1)     Not Correct (0)
-#> 10 Correct (1)     Correct (1)    
-#> 11 Correct (1)     Correct (1)    
-#> 12 Correct (1)     Correct (1)    
+#> 10 Correct (1)     Not Correct (0)
+#> 11 Correct (1)     Not Correct (0)
+#> 12 Correct (1)     Not Correct (0)
 #> 13 Correct (1)     Correct (1)    
 #> 14 Correct (1)     Correct (1)    
 #> 15 Correct (1)     Not Correct (0)
-#> 16 Correct (1)     Not Correct (0)
+#> 16 Correct (1)     Correct (1)
 
 dolphin_data |> 
   mutate(synth = to_synthetic(observed)) |>
@@ -793,10 +900,45 @@ dolphin_data |>
   geom_stack_label() +
   geom_prop() + 
   geom_prop_label() + 
-  stamp_prop(.94)  # observed now for reference
+  stamp_prop(.94) + # observed now for reference
+  stamp_prop_label(.94)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
+``` r
+  
+  
+donor_data |> 
+  mutate(synth = to_synthetic(decision)) |>
+  ggplot() + 
+  aes(x = synth) + 
+  geom_stack() + 
+  geom_stack_label() +
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop(.67) + # observed now for reference
+  stamp_prop_label(.67)  
+```
+
+![](README_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
+
+``` r
+
+
+scissors_data |> 
+  mutate(synth = to_synthetic(thrown)) |>
+  ggplot() + 
+  aes(x = synth) + 
+  geom_stack() + 
+  geom_stack_label() +
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop(.25) + # observed now for reference
+  stamp_prop_label(.25)  
+```
+
+![](README_files/figure-gfm/unnamed-chunk-18-3.png)<!-- -->
 
 ------------------------------------------------------------------------
 
@@ -938,7 +1080,7 @@ dolphins_balance_plot +
   geom_binomial_null()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 
@@ -972,7 +1114,7 @@ donors_balance_plot +
   geom_binomial_null()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 
@@ -984,7 +1126,7 @@ donors_balance_plot +
   stamp_eq_norm_prop()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-20-2.png)<!-- -->
 
 ------------------------------------------------------------------------
 
