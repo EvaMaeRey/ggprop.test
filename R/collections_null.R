@@ -61,7 +61,7 @@ compute_dbinom <- function(data, scales, prob = .5){
   
   num_trials <- nrow(data)
   
-  tidy_dbinom(single_trial_prob = .5, 
+  tidy_dbinom(single_trial_prob = prob, 
               num_trials = num_trials) |> 
     mutate(x = num_successes/num_trials,
            y = num_trials/2*probability/max(probability),
@@ -71,12 +71,11 @@ compute_dbinom <- function(data, scales, prob = .5){
 }
 
 #' @export
-geom_binomial_null <- function(...){
+geom_binomial_null <- function(prob = .5, ...){
   
   qlayer(geom = GeomSegment,
-         stat = qstat_panel(compute_dbinom))
-  
-  
+         stat = qstat_panel(compute_dbinom), prob = prob, ...)
+
 }
 
 #' @export

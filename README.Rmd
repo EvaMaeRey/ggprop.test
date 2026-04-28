@@ -106,6 +106,19 @@ donor_data |>
   stamp_prop_label(.5) +
   geom_normal_prop_null() + 
   geom_normal_prop_null_sds()
+
+
+
+scissors_data |>
+  ggplot() + 
+  aes(x = thrown) + 
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_prop() + 
+  geom_prop_label() +
+  stamp_prop(.333) +
+  stamp_prop_label(.333) +
+  geom_binomial_null(prob = .333)
 ```
 
 
@@ -217,8 +230,8 @@ What is the proportion opting in?
 
 ```{r}
 donor_data |> 
-  pull(decision) |> 
-  table()
+  count(decision) |> 
+  mutate(prop = n/n())
 ```
 
 
@@ -625,6 +638,9 @@ scissors_base_plot +
   stamp_prop(.33) + 
   stamp_prop_label(.33)
 
+
+scissors_balance_plot <- last_plot()
+
 ```
 
 # Interlude: What individual outcomes *would* we observe under null hypothesis?
@@ -731,7 +747,7 @@ donor_data |>
 
 
 scissors_data |> 
-  mutate(synth = to_synthetic(thrown)) |>
+  mutate(synth = to_synthetic(thrown, prob = .333)) |>
   ggplot() + 
   aes(x = synth) + 
   geom_stack() + 
@@ -820,7 +836,7 @@ compute_dbinom <- function(data, scales, prob = .5){
   
   num_trials <- nrow(data)
   
-  tidy_dbinom(single_trial_prob = .5, 
+  tidy_dbinom(single_trial_prob = prob, 
               num_trials = num_trials) |> 
     mutate(x = num_successes/num_trials,
            y = num_trials/2*probability/max(probability),
@@ -830,12 +846,11 @@ compute_dbinom <- function(data, scales, prob = .5){
 }
 
 #' @export
-geom_binomial_null <- function(...){
+geom_binomial_null <- function(prob = .5, ...){
   
   qlayer(geom = GeomSegment,
-         stat = qstat_panel(compute_dbinom))
-  
-  
+         stat = qstat_panel(compute_dbinom), prob = prob, ...)
+
 }
 
 #' @export
@@ -882,9 +897,9 @@ stamp_eq_norm_prop <- function(x = I(.125),
 dolphins_balance_plot +
   geom_binomial_null()
 
-tidy_dbinom(num_trials = 16) |>
-  mutate(prop = num_successes/16)
 
+tidy_dbinom(num_trials = 16) |>
+  mutate(prop_success = num_successes/16)
 ```
 
 
@@ -899,6 +914,16 @@ donors_balance_plot +
   geom_normal_prop_null() + 
   geom_normal_prop_null_sds() +
   stamp_eq_norm_prop()
+
+donors_null_dist_plot <- last_plot() 
+
+
+scissors_balance_plot +
+  geom_binomial_null(prob = .333)
+
+
+tidy_dbinom(num_trials = 20, single_trial_prob = .333) |>
+  mutate(prop_success = num_successes/20)
 ```
 
 
@@ -912,7 +937,8 @@ donor_data |>
   geom_normal_prop_null() + 
   geom_normal_prop_null_sds() + 
   stamp_prop(.67) + 
-  stamp_prop_label(.67)
+  stamp_prop_label(.67) +
+  stamp_eq_norm_prop()
 ```
 
 Exactly how many standard deviations away from the mean are you. 

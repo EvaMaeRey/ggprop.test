@@ -113,6 +113,7 @@ fs::dir_tree()
 #> ├── R
 #> │   ├── collections_null.R
 #> │   ├── compute_prop_viz.R
+#> │   ├── create_prop_data.R
 #> │   ├── gen_under_null.R
 #> │   ├── raw_data_viz.R
 #> │   └── statexpress.R
@@ -124,6 +125,7 @@ fs::dir_tree()
 #> │       ├── test_interlude-1.png
 #> │       ├── test_interlude-2.png
 #> │       ├── test_interlude-3.png
+#> │       ├── test_interlude-4.png
 #> │       ├── unnamed-chunk-10-1.png
 #> │       ├── unnamed-chunk-10-2.png
 #> │       ├── unnamed-chunk-10-3.png
@@ -168,6 +170,8 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-19-2.png
 #> │       ├── unnamed-chunk-20-1.png
 #> │       ├── unnamed-chunk-20-2.png
+#> │       ├── unnamed-chunk-20-3.png
+#> │       ├── unnamed-chunk-21-1.png
 #> │       ├── unnamed-chunk-3-1.png
 #> │       ├── unnamed-chunk-4-1.png
 #> │       ├── unnamed-chunk-4-2.png
@@ -307,11 +311,13 @@ What is the proportion opting in?
 
 ``` r
 donor_data |> 
-  pull(decision) |> 
-  table()
-#> 
-#>   not (0) donor (1) 
-#>        53       108
+  count(decision) |> 
+  mutate(prop = n/n())
+#> # A tibble: 2 × 3
+#>   decision      n  prop
+#>   <fct>     <int> <dbl>
+#> 1 not (0)      53  26.5
+#> 2 donor (1)   108  54
 ```
 
 ### scenario 2: dolphins
@@ -413,6 +419,7 @@ scissors_data
 ### On demand scenarios
 
 ``` r
+#' @export
 create_prop_data <- function(failure = "failure (0)", 
                              success = "success (1)", 
                              num_failure = 5, 
@@ -794,6 +801,12 @@ scissors_base_plot +
 
 ![](README_files/figure-gfm/unnamed-chunk-17-3.png)<!-- -->
 
+``` r
+
+
+scissors_balance_plot <- last_plot()
+```
+
 # Interlude: What individual outcomes *would* we observe under null hypothesis?
 
 <details>
@@ -927,7 +940,7 @@ donor_data |>
 
 
 scissors_data |> 
-  mutate(synth = to_synthetic(thrown)) |>
+  mutate(synth = to_synthetic(thrown, prob = .333)) |>
   ggplot() + 
   aes(x = synth) + 
   geom_stack() + 
@@ -1019,7 +1032,7 @@ compute_dbinom <- function(data, scales, prob = .5){
   
   num_trials <- nrow(data)
   
-  tidy_dbinom(single_trial_prob = .5, 
+  tidy_dbinom(single_trial_prob = prob, 
               num_trials = num_trials) |> 
     mutate(x = num_successes/num_trials,
            y = num_trials/2*probability/max(probability),
@@ -1029,12 +1042,11 @@ compute_dbinom <- function(data, scales, prob = .5){
 }
 
 #' @export
-geom_binomial_null <- function(...){
+geom_binomial_null <- function(prob = .5, ...){
   
   qlayer(geom = GeomSegment,
-         stat = qstat_panel(compute_dbinom))
-  
-  
+         stat = qstat_panel(compute_dbinom), prob = prob, ...)
+
 }
 
 #' @export
@@ -1051,17 +1063,17 @@ geom_normal_prop_null_sds <- function(...){
           ...)
   }
 
-GeomTextBig <- ggproto("GeomTextBig", GeomText,
+GeomTextBig <- ggplot2::ggproto("GeomTextBig", ggplot2::GeomText,
                        default_aes = 
-                         modifyList(GeomText$default_aes,
-                                    aes(size = from_theme(fontsize))))
+                         modifyList(ggplot2::GeomText$default_aes,
+                                    ggplot2::aes(size = ggplot2::from_theme(fontsize))))
 
 
 #' @export
 stamp_eq_norm_prop <- function(x = I(.125),
     y = I(.8), ...){
   
-  annotate(
+  ggplot2::annotate(
     "text",
     x = x,
     y = y,
@@ -1085,27 +1097,27 @@ dolphins_balance_plot +
 ``` r
 
 tidy_dbinom(num_trials = 16) |>
-  mutate(prop = num_successes/16)
+  mutate(prop_success = num_successes/16)
 #> # A tibble: 17 × 5
-#>    num_successes probability single_trial_prob num_trials   prop
-#>            <int>       <dbl>             <dbl>      <dbl>  <dbl>
-#>  1             0   0.0000153               0.5         16 0     
-#>  2             1   0.000244                0.5         16 0.0625
-#>  3             2   0.00183                 0.5         16 0.125 
-#>  4             3   0.00854                 0.5         16 0.188 
-#>  5             4   0.0278                  0.5         16 0.25  
-#>  6             5   0.0667                  0.5         16 0.312 
-#>  7             6   0.122                   0.5         16 0.375 
-#>  8             7   0.175                   0.5         16 0.438 
-#>  9             8   0.196                   0.5         16 0.5   
-#> 10             9   0.175                   0.5         16 0.562 
-#> 11            10   0.122                   0.5         16 0.625 
-#> 12            11   0.0667                  0.5         16 0.688 
-#> 13            12   0.0278                  0.5         16 0.75  
-#> 14            13   0.00854                 0.5         16 0.812 
-#> 15            14   0.00183                 0.5         16 0.875 
-#> 16            15   0.000244                0.5         16 0.938 
-#> 17            16   0.0000153               0.5         16 1
+#>    num_successes probability single_trial_prob num_trials prop_success
+#>            <int>       <dbl>             <dbl>      <dbl>        <dbl>
+#>  1             0   0.0000153               0.5         16       0     
+#>  2             1   0.000244                0.5         16       0.0625
+#>  3             2   0.00183                 0.5         16       0.125 
+#>  4             3   0.00854                 0.5         16       0.188 
+#>  5             4   0.0278                  0.5         16       0.25  
+#>  6             5   0.0667                  0.5         16       0.312 
+#>  7             6   0.122                   0.5         16       0.375 
+#>  8             7   0.175                   0.5         16       0.438 
+#>  9             8   0.196                   0.5         16       0.5   
+#> 10             9   0.175                   0.5         16       0.562 
+#> 11            10   0.122                   0.5         16       0.625 
+#> 12            11   0.0667                  0.5         16       0.688 
+#> 13            12   0.0278                  0.5         16       0.75  
+#> 14            13   0.00854                 0.5         16       0.812 
+#> 15            14   0.00183                 0.5         16       0.875 
+#> 16            15   0.000244                0.5         16       0.938 
+#> 17            16   0.0000153               0.5         16       1
 ```
 
 ``` r
@@ -1118,8 +1130,7 @@ donors_balance_plot +
 
 ``` r
 
-
-# donnors with null normal approximation...
+# donors with null normal approximation...
 donors_balance_plot +
   geom_normal_prop_null() + 
   geom_normal_prop_null_sds() +
@@ -1127,6 +1138,53 @@ donors_balance_plot +
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-20-2.png)<!-- -->
+
+``` r
+
+
+scissors_balance_plot +
+  geom_binomial_null(prob = .333)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-20-3.png)<!-- -->
+
+``` r
+
+
+tidy_dbinom(num_trials = 20, single_trial_prob = .333) |>
+  mutate(prop_success = num_successes/20)
+#> # A tibble: 21 × 5
+#>    num_successes probability single_trial_prob num_trials prop_success
+#>            <int>       <dbl>             <dbl>      <dbl>        <dbl>
+#>  1             0    0.000304             0.333         20         0   
+#>  2             1    0.00303              0.333         20         0.05
+#>  3             2    0.0144               0.333         20         0.1 
+#>  4             3    0.0431               0.333         20         0.15
+#>  5             4    0.0914               0.333         20         0.2 
+#>  6             5    0.146                0.333         20         0.25
+#>  7             6    0.182                0.333         20         0.3 
+#>  8             7    0.182                0.333         20         0.35
+#>  9             8    0.148                0.333         20         0.4 
+#> 10             9    0.0983               0.333         20         0.45
+#> # ℹ 11 more rows
+```
+
+``` r
+donor_data |>
+  ggplot() + 
+  aes(x = decision |> 
+        as.logical() |> 
+        as.numeric()) + 
+  geom_normal_prop_null() + 
+  geom_normal_prop_null_sds() + 
+  stamp_prop(.67) + 
+  stamp_prop_label(.67) +
+  stamp_eq_norm_prop()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+
+Exactly how many standard deviations away from the mean are you.
 
 ------------------------------------------------------------------------
 
@@ -1140,6 +1198,7 @@ knitrExtra::chunk_to_dir("raw_data_viz")
 knitrExtra::chunk_to_dir("compute_prop_viz")
 knitrExtra::chunk_to_dir("gen_under_null")
 knitrExtra::chunk_to_dir("collections_null")
+knitrExtra::chunk_to_dir("create_prop_data")
 ```
 
 ``` r
