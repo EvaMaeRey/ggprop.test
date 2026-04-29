@@ -4,8 +4,8 @@ output:
     toc: TRUE
 title: "ggprop.test"
 ---
-   
-<!-- README.md is generated from README.Rmd. Please edit that file --> 
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(      
@@ -21,7 +21,6 @@ library(ggprop.test)
 ```
 
 ## Where we are headed (what ggprop.test delivers)
-
 
 ```{r, echo = F}
 library(tidyverse)
@@ -70,8 +69,6 @@ library(patchwork)
   ggchalkboard:::theme_chalkboard(base_size = 14) 
 ```
 
-
-
 ```{r test_interlude, include = F}
 # and the interlude...
 donor_data |>
@@ -107,7 +104,22 @@ donor_data |>
   geom_normal_prop_null() + 
   geom_normal_prop_null_sds()
 
-
+## What if we had a larger sample with the same properties?
+## The distribution for the null would be narrower
+donor_data |>
+  bind_rows(donor_data) |> 
+  bind_rows(donor_data) |>
+  bind_rows(donor_data) |>
+  ggplot() + 
+  aes(x = decision) + 
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_prop() + 
+  geom_prop_label() +
+  stamp_prop(.5) +
+  stamp_prop_label(.5) +
+  geom_normal_prop_null() + 
+  geom_normal_prop_null_sds()
 
 scissors_data |>
   ggplot() + 
@@ -117,39 +129,36 @@ scissors_data |>
   geom_prop() + 
   geom_prop_label() +
   stamp_prop(.333) +
-  stamp_prop_label(.333) +
-  geom_binomial_null(prob = .333)
+  stamp_prop_label(.333)
 ```
-
 
 ## {ggprop.test} is teaching 'mvp' (minimum viable package) that translates the visual logic of the prop test to ggplot2.
 
 ### Motivation for ggproptest and friends.
 
-'Telling a story with data' is a popular idea.  Let's hear from some folks on data storytelling: 
+'Telling a story with data' is a popular idea. Let's hear from some folks on data storytelling:
 
-> The book is meant as a guide to making visualizations that accurately reflect the data, *tell a story*, and look professional. - Clause Wilke in [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/), 
-> I'm focusing on visual design and *storytelling* within our organization. -- Will Chase's introduction for ['The *Glamour* of Graphics' talk 2020](https://www.youtube.com/watch?v=h5cTacaWE6I)
+> The book is meant as a guide to making visualizations that accurately reflect the data, *tell a story*, and look professional. - Clause Wilke in [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/), I'm focusing on visual design and *storytelling* within our organization. -- Will Chase's introduction for ['The *Glamour* of Graphics' talk 2020](https://www.youtube.com/watch?v=h5cTacaWE6I)
 
-> Companies like [Story Telling with Data](https://www.storytellingwithdata.com/) and [Building Stories with Data](https://www.cararthompson.com/)  put this idea front and center to their missions.
+> Companies like [Story Telling with Data](https://www.storytellingwithdata.com/) and [Building Stories with Data](https://www.cararthompson.com/) put this idea front and center to their missions.
 
 However, the 'data storytelling' tends to be focused on reaching broad audiences, communicating statistical summaries (rather than trains-of-thought), and compelling complete plots. 📊
 
-{ggprop.test} and friends, in contrast, are an attempt to capture the *statistical stories* that are told in words and with visual schema  all the time in classrooms, but don't yet have translations to code.
+{ggprop.test} and friends, in contrast, are an attempt to capture the *statistical stories* that are told in words or and with visual schema all the time in classrooms, but don't yet have translations to code. Notably these statistical narratives can also be compellingly told with applets, and ggprop.test's narratives take much inspiration from how you might step through logic with highly acclaimed [Introduction to Statistical Investigation](https://www.isi-stats.com/) and the Rossman-Chance applets [https://www.isi-stats.com/](https://www.rossmanchance.com/).  For convenience and usability with the ISI curriculum, many of the example datasets and scenarios are from the ISI collection. 
 
-{ggprop.test} exists to allow instructors and students to engage with the logic of statistical tests and techniques, often presented step-by-step on a chalkboard 🧑‍🏫 in a class room, but now also programmatically! 
+{ggprop.test} exists to allow instructors and students to engage with the logic of statistical tests and techniques, often presented step-by-step on a chalkboard 🧑‍🏫 in a class room, but now also programmatically!
 
-Which we don't aim to replace the chalkboard/paper 📝 experience but compliment it ---- it's the inspiration for this project.  See [New approaches to light-weight ‘geom’ (layer) extension]() https://evamaerey.github.io/mytidytuesday/2024-10-29-asa-cowy-fall-2024/asa-cowy-fall-2024.html#22)
+Which we don't aim to replace the chalkboard/paper 📝 experience but compliment it ---- it's the inspiration for this project. See [New approaches to light-weight ‘geom’ (layer) extension]() <https://evamaerey.github.io/mytidytuesday/2024-10-29-asa-cowy-fall-2024/asa-cowy-fall-2024.html#22>)
 
 Having tools like ggprop.test might mean that instead of using the logic a handful of times for a handful of examples, student and instructors might walk through this logic *large number* of times - becoming **not just familiar** with the logic, but **fluent** with the visual, statistical story.
 
-Under the hood, ggplot2 extension is used so that individual concepts can be delivered in both a semantic and visual way. 
+Under the hood, ggplot2 extension is used so that individual concepts can be delivered in both a semantic and visual way.
 
 ### An introductiong to packaging requirements via ggprop.test
 
-{ggprop.test} is an 'mvp' (a minimal viable product/package).  This type of package identifies the minimum required to deliver functionality, but stops short of putting in additional work that might be required to get a package to CRAN and doesn't adhere to all of [packaging best practices](https://r-pkgs.org/), noting that student feedback and might lead to pretty dramatic changes and rewrites.
+{ggprop.test} is an 'mvp' (a minimal viable product/package). This type of package identifies the minimum required to deliver functionality, but stops short of putting in additional work that might be required to get a package to CRAN and doesn't adhere to all of [packaging best practices](https://r-pkgs.org/), noting that student feedback and might lead to pretty dramatic changes and rewrites.
 
-In our Spring 2026 class, we'll pull back the curtain on package a tad, by having Let's have a look at the 'mvp' ggprop.test structure (which does have a lot in common with full-blown CRAN-ready packages):  https://github.com/EvaMaeRey/ggprop.test
+In our Spring 2026 class, we'll pull back the curtain on package a tad, by having Let's have a look at the 'mvp' ggprop.test structure (which does have a lot in common with full-blown CRAN-ready packages): <https://github.com/EvaMaeRey/ggprop.test>
 
 <details>
 
@@ -157,11 +166,11 @@ In our Spring 2026 class, we'll pull back the curtain on package a tad, by havin
 fs::dir_tree()
 ```
 
-Goal for package functions? 
+Goal for package functions?
 
-- 'Erogenomics'.  
-- Trace a train of thought...
-- Approximate the wonderful analogue experience
+-   'Erogenomics'.\
+-   Trace a train of thought...
+-   Approximate the wonderful analogue experience
 
 ```{r}
 knitr::include_graphics("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*hZubBVjVDcl8ZixE-WRDvA.jpeg")
@@ -172,7 +181,8 @@ knitr::include_graphics("https://media.licdn.com/dms/image/v2/D5622AQEoFtfFtQr-G
 ```
 
 </details>
----
+
+------------------------------------------------------------------------
 
 # Back to exploring the prop test!! Yay!!
 
@@ -188,20 +198,17 @@ library(tidyverse)
 library(ggprop.test)
 ```
 
-
-
-# Data and Scenarios 
+# Data and Scenarios
 
 ### scenario 1: organ donation
 
-> Motivating question:  For survey of 161 individuals on willingness to serve as organ doners in the case of an accident, is there evidence that responses rate differs from a 50/50 split, when 53 individuals respond 'no' and 108 individuals respond 'yes'?
+> Motivating question: For survey of 161 individuals on willingness to serve as organ doners in the case of an accident, is there evidence that responses rate differs from a 50/50 split, when 53 individuals respond 'no' and 108 individuals respond 'yes'?
 
-> Does the sample provide statistical evidence that there isn't a 50-50 split in preference for donation?  Or indiffernece (like people are just answering randomly because they are not paying attention).  Is their answer equivelant to tossing a coin?
-
+> Does the sample provide statistical evidence that there isn't a 50-50 split in preference for donation? Or indiffernece (like people are just answering randomly because they are not paying attention). Is their answer equivelant to tossing a coin?
 
 <details>
 
-"https://www.isi-stats.com/isi/data/prelim/OrganDonor.txt"
+"<https://www.isi-stats.com/isi/data/prelim/OrganDonor.txt>"
 
 ```{r}
 library(tidyverse)
@@ -223,8 +230,7 @@ donor_data |>
 
 </details>
 
-
-How can ggprop.test functions help visualize the basics of this question? 
+How can ggprop.test functions help visualize the basics of this question?
 
 What is the proportion opting in?
 
@@ -234,9 +240,7 @@ donor_data |>
   mutate(prop = n/n())
 ```
 
-
 ### scenario 2: dolphins
-
 
 <details>
 
@@ -262,10 +266,9 @@ dolphin_data
 
 ```
 
-> See too. 'Fishermen talking to dolphins' https://www.youtube.com/watch?v=6MZqKfUMFn0
+> See too. 'Fishermen talking to dolphins' <https://www.youtube.com/watch?v=6MZqKfUMFn0>
 
-> Is the US a member of the 'Agreement on the International Dolphin Conservation Program?' Agreement on the International Dolphin Conservation Program - https://www.state.gov/international-dolphin-conservation-program
-
+> Is the US a member of the 'Agreement on the International Dolphin Conservation Program?' Agreement on the International Dolphin Conservation Program - <https://www.state.gov/international-dolphin-conservation-program>
 
 ### scenario 3: Rock paper scissors
 
@@ -285,13 +288,11 @@ usethis::use_data(scissors_data, overwrite = T)
 
 </details>
 
-
 ```{r}
 scissors_data
 ```
 
-
----
+------------------------------------------------------------------------
 
 ### On demand scenarios
 
@@ -303,16 +304,14 @@ create_prop_data <- function(failure = "failure (0)",
                              num_success = 5, 
                              var_name = "outcome"){
   
-   outcome <-  c(failure, success) |> rep(c(num_failure, num_success)) |> sample()
+   outcome <-  c(failure, success) |> rep(c(num_failure, num_success)) |> sample() |> factor(levels = c(failure, success))
 
    tibble(outcome)
   
 }
 ```
 
-
-
-"Kissing right" example... https://www.isi-stats.com/isi/labs/lab3/lab3_1.html
+"Kissing right" example... <https://www.isi-stats.com/isi/labs/lab3/lab3_1.html>
 
 'In the actual study, Dr. Güntürkün observed 80 of the 124 couples in his sample turn to the right.'
 
@@ -326,16 +325,36 @@ create_prop_data(failure = "not kiss right (0)",
 ```
 
 
+```{r}
+kissing_data <- create_prop_data(failure = "not kiss right (0)",
+                 success = "kiss right (1)",
+                 # total of 124 minus succes cases
+                 num_failure = 124-80, 
+                 num_success = 80)
 
----
+kissing_data |> 
+  ggplot() + 
+  aes(x = outcome) + 
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_support() + 
+  geom_prop() +
+  geom_prop_label() + 
+  stamp_prop(.5) + 
+  stamp_prop_label(.5) + 
+  geom_normal_prop_null() + 
+  geom_normal_prop_null_sds()
+```
+
+------------------------------------------------------------------------
 
 # Visualizing raw data
-   
-<details>   
-   
+
+<details>
+
 #### cloning statexpress functions
 
-Some convenience functions from {statexpress} are used, because we want this to be a bit more self-contained at this point, so we just clone them for now.  statexpress is evolving and is not on CRAN.
+Some convenience functions from {statexpress} are used, because we want this to be a bit more self-contained at this point, so we just clone them for now. statexpress is evolving and is not on CRAN.
 
 ```{r statexpress}
 qlayer <- function (mapping = NULL, data = NULL, geom = ggplot2::GeomPoint, stat = StatIdentity, 
@@ -379,12 +398,7 @@ qproto_update <- function (`_inherit`, default_aes_update = NULL, ...)
 
 ```
 
-
-
-
-
 #### And then define the functions...
-
 
 ```{r raw_data_viz, echo = T, message = F, warning=F}
 # 1. layer stack of bricks
@@ -447,7 +461,6 @@ geom_support <- function(...){
 
 </details>
 
-
 ```{r}
 theme_minimal(paper = "grey25", 
               ink = "whitesmoke" |> alpha(.9),
@@ -482,10 +495,6 @@ scissors_data |>
 
 scissors_base_plot <- last_plot()
 ```
-
-
-
-
 
 # Calc and Viz the Proportion, allowing null to be visualized
 
@@ -716,7 +725,7 @@ data_add_synth <- function(data, var, prob = .5){
 
 </details>
 
-How many trials where we are drawing from null, before we see something as far from .5 as .67? 
+How many trials where we are drawing from null, before we see something as far from .5 as .67?
 
 ```{r}
 dolphin_data |> 
@@ -758,35 +767,33 @@ scissors_data |>
   stamp_prop_label(.25)  
 ```
 
----
+------------------------------------------------------------------------
 
-Would we reflect:  "I don't think that the null is true.  It'd be extremely rare to see something as big as .67 if the null were true.  The observed balance (proportion) of .67 doesn't look consistent with a population balance of .5"  
+Would we reflect: "I don't think that the null is true. It'd be extremely rare to see something as big as .67 if the null were true. The observed balance (proportion) of .67 doesn't look consistent with a population balance of .5"
 
 --
 
-Term of art:  "we reject the null hypothesis"
-
+Term of art: "we reject the null hypothesis"
 
 # Distributions for the Null: What collections of hypothetical outcomes *could* we observe under null hypothesis?
 
 <details>
 
-
 ```{r collections_null}
 # 7. normal distribution based on null and n
-compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5, by = .1)
+compute_dnorm_prop <- function(data, scales, prob = .5, dist_sds = seq(-3.5, 3.5, by = .1)
 ){
   
   n <- data |> nrow()
   n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
 
   
-  sd = sqrt(null * (1 - null)/n) # sd of the null distribution
+  sd = sqrt(prob * (1 - prob)/n) # sd of the null distribution
   
-  q <- dist_sds * sd + null
+  q <- dist_sds * sd + prob
   
   data.frame(x = q) |>
-    dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
+    dplyr::mutate(height = dnorm(q, sd = sd, mean = prob)) |>
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
     dplyr::mutate(y = .5*n*height/height_max) |>  # This is a bit fragile...
     dplyr::mutate(xend = x,
@@ -798,23 +805,21 @@ compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5
 
 
 # 8. normal distribution mean and sds based on null and n
-compute_dnorm_prop_sds <- function(data, scales, null = .5,
-  dist_sds = -4:4){
+compute_dnorm_prop_sds <- function(data, scales, prob = .5, dist_sds = -4:4){
   
   n <- data |> nrow()
   
   n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
   
-  sd = sqrt(null * (1 - null)/n) # sd of the null distribution
+  sd = sqrt(prob * (1 - prob)/n) # sd of the null distribution
   
-  q <- dist_sds * sd + null
+  q <- dist_sds * sd + prob
   
   data.frame(x = q) |>
-    dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
+    dplyr::mutate(height = dnorm(q, sd = sd, mean = prob)) |>
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
     dplyr::mutate(y = .5*n*height/height_max) |> # This is a bit fragile...
-    dplyr::mutate(xend = x,
-           yend = 0)
+    dplyr::mutate(xend = x, yend = 0)
 
 }  
 
@@ -841,7 +846,8 @@ compute_dbinom <- function(data, scales, prob = .5){
     mutate(x = num_successes/num_trials,
            y = num_trials/2*probability/max(probability),
            yend = 0,
-           xend = x) 
+           xend = x) |> 
+    mutate(unv)
   
 }
 
@@ -854,16 +860,20 @@ geom_binomial_null <- function(prob = .5, ...){
 }
 
 #' @export
-geom_normal_prop_null <- function(...){
-  qlayer(geom = qproto_update(ggplot2::GeomArea, ggplot2::aes(alpha = .2)),
+geom_normal_prop_null <- function(..., prob = .5){
+  qlayer(geom = qproto_update(ggplot2::GeomArea, 
+                              ggplot2::aes(alpha = .2)),
          stat = qstat_panel(compute_dnorm_prop), 
+         prob = prob, 
          ...)
   } 
 
 #' @export
-geom_normal_prop_null_sds <- function(...){
-   qlayer(geom = qproto_update(ggplot2::GeomSegment, ggplot2::aes(linetype = "dotted")),
+geom_normal_prop_null_sds <- function(..., prob = .5){
+   qlayer(geom = qproto_update(ggplot2::GeomSegment, 
+                               ggplot2::aes(linetype = "dotted")),
           stat = qstat_panel(compute_dnorm_prop_sds), 
+          prob = prob,
           ...)
   }
 
@@ -888,9 +898,7 @@ stamp_eq_norm_prop <- function(x = I(.125),
 }
 ```
 
-
 </details>
-
 
 ```{r}
 # dolphins with binomial only...
@@ -901,8 +909,6 @@ dolphins_balance_plot +
 tidy_dbinom(num_trials = 16) |>
   mutate(prop_success = num_successes/16)
 ```
-
-
 
 ```{r}
 # donors w/ null distribution...
@@ -926,8 +932,6 @@ tidy_dbinom(num_trials = 20, single_trial_prob = .333) |>
   mutate(prop_success = num_successes/20)
 ```
 
-
-
 ```{r}
 donor_data |>
   ggplot() + 
@@ -941,18 +945,60 @@ donor_data |>
   stamp_eq_norm_prop()
 ```
 
-Exactly how many standard deviations away from the mean are you. 
+
+## Calculating the z-score by hand
+
+The 'z-score' answers the question: How many standard deviations are you away from the asserted null.
+
+We take this question in two parts.
+
+1. What is the 'width' of the standard deviation (sd)
+
+We use the formula: 
+
+$$ \sqrt(\frac{\pi*(1-\pi)}{n}) $$
+
+2. How far away from the null is the observed value in sds (this is the z score)
+
+
+```{r}
+# calculate the z score by hand
+
+# Step 1. How large is the standard deviation:  sqrt(pi * (1-pi)/n) where pi is the asserted proportion - the null. 
+
+sd <- sqrt(.5*.5/161)
+sd
+
+# Step 2.  How many standard deviations away?
+
+# and what is my z score? 
+(.67 - .5)/sd
+
+# it's 4.3 -- Really far out - Big Z score!! 
 
 
 
+```
+
+# Using prop.test to just do all this for me 🙃🚀
+
+```{r}
+# number of 'successes'
+x = sum(donor_data$decision == "donor (1)")
+# number of 'failures'
+n = length(donor_data$decision)
+
+prop.test(x, n = n, p = .5)
 
 
 
+```
 
----
+
+
+------------------------------------------------------------------------
 
 # Minimal Packaging
-
 
 ```{r, eval = F}
 # knitrExtra::chunk_names_get()
@@ -974,19 +1020,24 @@ devtools::check(".")
 devtools::install(pkg = ".", upgrade = "never")
 ```
 
-
 <!-- # epilogue... -->
-
 
 <!-- Another approach that is less concerned with being a bridge to ggplot2 layer extension...?   -->
 
 <!-- ```{r, eval = F, echo = F} -->
+
 <!-- geom_support <- function(...){geom_segment(data = compute_balance, ...)} -->
+
 <!-- geom_prop <- function(...){geom_point(data = compute_xmean_at_y0, label = "^", ...)} -->
 
 <!-- donor |> -->
+
 <!--   ggplot() +  -->
+
 <!--   aes(x = decision) + -->
+
 <!--   geom_support() + -->
+
 <!--   geom_prop() -->
+
 <!-- ``` -->

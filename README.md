@@ -25,6 +25,9 @@ ggprop.test
 - [Distributions for the Null: What collections of hypothetical outcomes
   *could* we observe under null
   hypothesis?](#distributions-for-the-null-what-collections-of-hypothetical-outcomes-could-we-observe-under-null-hypothesis)
+  - [Calculating the z-score by hand](#calculating-the-z-score-by-hand)
+- [Using prop.test to just do all this for me
+  🙃🚀](#using-proptest-to-just-do-all-this-for-me-upside_down_facerocket)
 - [Minimal Packaging](#minimal-packaging)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -67,8 +70,16 @@ audiences, communicating statistical summaries (rather than
 trains-of-thought), and compelling complete plots. 📊
 
 {ggprop.test} and friends, in contrast, are an attempt to capture the
-*statistical stories* that are told in words and with visual schema all
-the time in classrooms, but don’t yet have translations to code.
+*statistical stories* that are told in words or and with visual schema
+all the time in classrooms, but don’t yet have translations to code.
+Notably these statistical narratives can also be compellingly told with
+applets, and ggprop.test’s narratives take much inspiration from how you
+might step through logic with highly acclaimed [Introduction to
+Statistical Investigation](https://www.isi-stats.com/) and the
+Rossman-Chance applets
+[https://www.isi-stats.com/](https://www.rossmanchance.com/). For
+convenience and usability with the ISI curriculum, many of the example
+datasets and scenarios are from the ISI collection.
 
 {ggprop.test} exists to allow instructors and students to engage with
 the logic of statistical tests and techniques, often presented
@@ -108,6 +119,10 @@ does have a lot in common with full-blown CRAN-ready packages):
 ``` r
 fs::dir_tree()
 #> .
+#> ├── 2026_04_29_flipbooks
+#> │   ├── cliprcode.R
+#> │   ├── current_image.Rdata
+#> │   └── temp_copied.qmd
 #> ├── DESCRIPTION
 #> ├── NAMESPACE
 #> ├── R
@@ -126,6 +141,7 @@ fs::dir_tree()
 #> │       ├── test_interlude-2.png
 #> │       ├── test_interlude-3.png
 #> │       ├── test_interlude-4.png
+#> │       ├── test_interlude-5.png
 #> │       ├── unnamed-chunk-10-1.png
 #> │       ├── unnamed-chunk-10-2.png
 #> │       ├── unnamed-chunk-10-3.png
@@ -168,10 +184,14 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-18-3.png
 #> │       ├── unnamed-chunk-19-1.png
 #> │       ├── unnamed-chunk-19-2.png
+#> │       ├── unnamed-chunk-19-3.png
 #> │       ├── unnamed-chunk-20-1.png
 #> │       ├── unnamed-chunk-20-2.png
 #> │       ├── unnamed-chunk-20-3.png
 #> │       ├── unnamed-chunk-21-1.png
+#> │       ├── unnamed-chunk-21-2.png
+#> │       ├── unnamed-chunk-21-3.png
+#> │       ├── unnamed-chunk-22-1.png
 #> │       ├── unnamed-chunk-3-1.png
 #> │       ├── unnamed-chunk-4-1.png
 #> │       ├── unnamed-chunk-4-2.png
@@ -426,7 +446,7 @@ create_prop_data <- function(failure = "failure (0)",
                              num_success = 5, 
                              var_name = "outcome"){
   
-   outcome <-  c(failure, success) |> rep(c(num_failure, num_success)) |> sample()
+   outcome <-  c(failure, success) |> rep(c(num_failure, num_success)) |> sample() |> factor(levels = c(failure, success))
 
    tibble(outcome)
   
@@ -443,7 +463,7 @@ his sample turn to the right.’
 create_prop_data() |> head()
 #> # A tibble: 6 × 1
 #>   outcome    
-#>   <chr>      
+#>   <fct>      
 #> 1 success (1)
 #> 2 failure (0)
 #> 3 failure (0)
@@ -457,7 +477,7 @@ create_prop_data(failure = "not kiss right (0)",
                  num_success = 80)
 #> # A tibble: 124 × 1
 #>    outcome           
-#>    <chr>             
+#>    <fct>             
 #>  1 not kiss right (0)
 #>  2 not kiss right (0)
 #>  3 not kiss right (0)
@@ -470,6 +490,29 @@ create_prop_data(failure = "not kiss right (0)",
 #> 10 kiss right (1)    
 #> # ℹ 114 more rows
 ```
+
+``` r
+kissing_data <- create_prop_data(failure = "not kiss right (0)",
+                 success = "kiss right (1)",
+                 # total of 124 minus succes cases
+                 num_failure = 124-80, 
+                 num_success = 80)
+
+kissing_data |> 
+  ggplot() + 
+  aes(x = outcome) + 
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_support() + 
+  geom_prop() +
+  geom_prop_label() + 
+  stamp_prop(.5) + 
+  stamp_prop_label(.5) + 
+  geom_normal_prop_null() + 
+  geom_normal_prop_null_sds()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ------------------------------------------------------------------------
 
@@ -601,7 +644,7 @@ donor_data |>
   geom_support()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
 
@@ -616,7 +659,7 @@ dolphin_data |>
   geom_support()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->
 
 ``` r
 
@@ -630,7 +673,7 @@ scissors_data |>
   geom_support()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-3.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-17-3.png)<!-- -->
 
 ``` r
 
@@ -773,7 +816,7 @@ donor_base_plot +
   stamp_prop_label()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 
@@ -786,7 +829,7 @@ dolphins_base_plot +
   stamp_prop_label()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
 
 ``` r
 
@@ -799,7 +842,7 @@ scissors_base_plot +
   stamp_prop_label(.33)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-17-3.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-18-3.png)<!-- -->
 
 ``` r
 
@@ -888,21 +931,21 @@ dolphin_data |>
 #> # A tibble: 16 × 2
 #>    observed        synthetic      
 #>    <fct>           <fct>          
-#>  1 Correct (1)     Correct (1)    
-#>  2 Correct (1)     Correct (1)    
-#>  3 Correct (1)     Not Correct (0)
+#>  1 Correct (1)     Not Correct (0)
+#>  2 Correct (1)     Not Correct (0)
+#>  3 Correct (1)     Correct (1)    
 #>  4 Correct (1)     Not Correct (0)
-#>  5 Correct (1)     Correct (1)    
-#>  6 Not Correct (0) Correct (1)    
-#>  7 Correct (1)     Correct (1)    
+#>  5 Correct (1)     Not Correct (0)
+#>  6 Not Correct (0) Not Correct (0)
+#>  7 Correct (1)     Not Correct (0)
 #>  8 Correct (1)     Correct (1)    
 #>  9 Correct (1)     Not Correct (0)
-#> 10 Correct (1)     Not Correct (0)
+#> 10 Correct (1)     Correct (1)    
 #> 11 Correct (1)     Not Correct (0)
 #> 12 Correct (1)     Not Correct (0)
-#> 13 Correct (1)     Correct (1)    
+#> 13 Correct (1)     Not Correct (0)
 #> 14 Correct (1)     Correct (1)    
-#> 15 Correct (1)     Not Correct (0)
+#> 15 Correct (1)     Correct (1)    
 #> 16 Correct (1)     Correct (1)
 
 dolphin_data |> 
@@ -917,7 +960,7 @@ dolphin_data |>
   stamp_prop_label(.94)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
   
@@ -934,7 +977,7 @@ donor_data |>
   stamp_prop_label(.67)  
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->
 
 ``` r
 
@@ -951,7 +994,7 @@ scissors_data |>
   stamp_prop_label(.25)  
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-3.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-19-3.png)<!-- -->
 
 ------------------------------------------------------------------------
 
@@ -970,19 +1013,19 @@ Term of art: “we reject the null hypothesis”
 
 ``` r
 # 7. normal distribution based on null and n
-compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5, by = .1)
+compute_dnorm_prop <- function(data, scales, prob = .5, dist_sds = seq(-3.5, 3.5, by = .1)
 ){
   
   n <- data |> nrow()
   n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
 
   
-  sd = sqrt(null * (1 - null)/n) # sd of the null distribution
+  sd = sqrt(prob * (1 - prob)/n) # sd of the null distribution
   
-  q <- dist_sds * sd + null
+  q <- dist_sds * sd + prob
   
   data.frame(x = q) |>
-    dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
+    dplyr::mutate(height = dnorm(q, sd = sd, mean = prob)) |>
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
     dplyr::mutate(y = .5*n*height/height_max) |>  # This is a bit fragile...
     dplyr::mutate(xend = x,
@@ -994,23 +1037,21 @@ compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5
 
 
 # 8. normal distribution mean and sds based on null and n
-compute_dnorm_prop_sds <- function(data, scales, null = .5,
-  dist_sds = -4:4){
+compute_dnorm_prop_sds <- function(data, scales, prob = .5, dist_sds = -4:4){
   
   n <- data |> nrow()
   
   n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
   
-  sd = sqrt(null * (1 - null)/n) # sd of the null distribution
+  sd = sqrt(prob * (1 - prob)/n) # sd of the null distribution
   
-  q <- dist_sds * sd + null
+  q <- dist_sds * sd + prob
   
   data.frame(x = q) |>
-    dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
+    dplyr::mutate(height = dnorm(q, sd = sd, mean = prob)) |>
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
     dplyr::mutate(y = .5*n*height/height_max) |> # This is a bit fragile...
-    dplyr::mutate(xend = x,
-           yend = 0)
+    dplyr::mutate(xend = x, yend = 0)
 
 }  
 
@@ -1037,7 +1078,8 @@ compute_dbinom <- function(data, scales, prob = .5){
     mutate(x = num_successes/num_trials,
            y = num_trials/2*probability/max(probability),
            yend = 0,
-           xend = x) 
+           xend = x) |> 
+    mutate(unv)
   
 }
 
@@ -1050,16 +1092,20 @@ geom_binomial_null <- function(prob = .5, ...){
 }
 
 #' @export
-geom_normal_prop_null <- function(...){
-  qlayer(geom = qproto_update(ggplot2::GeomArea, ggplot2::aes(alpha = .2)),
+geom_normal_prop_null <- function(..., prob = .5){
+  qlayer(geom = qproto_update(ggplot2::GeomArea, 
+                              ggplot2::aes(alpha = .2)),
          stat = qstat_panel(compute_dnorm_prop), 
+         prob = prob, 
          ...)
   } 
 
 #' @export
-geom_normal_prop_null_sds <- function(...){
-   qlayer(geom = qproto_update(ggplot2::GeomSegment, ggplot2::aes(linetype = "dotted")),
+geom_normal_prop_null_sds <- function(..., prob = .5){
+   qlayer(geom = qproto_update(ggplot2::GeomSegment, 
+                               ggplot2::aes(linetype = "dotted")),
           stat = qstat_panel(compute_dnorm_prop_sds), 
+          prob = prob,
           ...)
   }
 
@@ -1092,9 +1138,10 @@ dolphins_balance_plot +
   geom_binomial_null()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
+
 
 tidy_dbinom(num_trials = 16) |>
   mutate(prop_success = num_successes/16)
@@ -1126,7 +1173,7 @@ donors_balance_plot +
   geom_binomial_null()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
 ``` r
 
@@ -1137,16 +1184,18 @@ donors_balance_plot +
   stamp_eq_norm_prop()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-20-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->
 
 ``` r
+
+donors_null_dist_plot <- last_plot() 
 
 
 scissors_balance_plot +
   geom_binomial_null(prob = .333)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-20-3.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->
 
 ``` r
 
@@ -1182,9 +1231,63 @@ donor_data |>
   stamp_eq_norm_prop()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
-Exactly how many standard deviations away from the mean are you.
+## Calculating the z-score by hand
+
+The ‘z-score’ answers the question: How many standard deviations are you
+away from the asserted null.
+
+We take this question in two parts.
+
+1.  What is the ‘width’ of the standard deviation (sd)
+
+We use the formula:
+
+$$ \sqrt(\frac{\pi*(1-\pi)}{n}) $$
+
+2.  How far away from the null is the observed value in sds (this is the
+    z score)
+
+``` r
+# calculate the z score by hand
+
+# Step 1. How large is the standard deviation:  sqrt(pi * (1-pi)/n) where pi is the asserted proportion - the null. 
+
+sd <- sqrt(.5*.5/161)
+sd
+#> [1] 0.03940552
+
+# Step 2.  How many standard deviations away?
+
+# and what is my z score? 
+(.67 - .5)/sd
+#> [1] 4.314116
+
+# it's 4.3 -- Really far out - Big Z score!! 
+```
+
+# Using prop.test to just do all this for me 🙃🚀
+
+``` r
+# number of 'successes'
+x = sum(donor_data$decision == "donor (1)")
+# number of 'failures'
+n = length(donor_data$decision)
+
+prop.test(x, n = n, p = .5)
+#> 
+#>  1-sample proportions test with continuity correction
+#> 
+#> data:  x out of n, null probability 0.5
+#> X-squared = 18.112, df = 1, p-value = 2.083e-05
+#> alternative hypothesis: true p is not equal to 0.5
+#> 95 percent confidence interval:
+#>  0.5917808 0.7415370
+#> sample estimates:
+#>         p 
+#> 0.6708075
+```
 
 ------------------------------------------------------------------------
 
