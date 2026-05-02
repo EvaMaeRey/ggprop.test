@@ -1,17 +1,17 @@
 # 7. normal distribution based on null and n
-compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5, by = .1)
+compute_dnorm_prop <- function(data, scales, prob = .5, dist_sds = seq(-3.5, 3.5, by = .1)
 ){
   
   n <- data |> nrow()
   n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
 
   
-  sd = sqrt(null * (1 - null)/n) # sd of the null distribution
+  sd = sqrt(prob * (1 - prob)/n) # sd of the null distribution
   
-  q <- dist_sds * sd + null
+  q <- dist_sds * sd + prob
   
   data.frame(x = q) |>
-    dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
+    dplyr::mutate(height = dnorm(q, sd = sd, mean = prob)) |>
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
     dplyr::mutate(y = .5*n*height/height_max) |>  # This is a bit fragile...
     dplyr::mutate(xend = x,
@@ -23,23 +23,21 @@ compute_dnorm_prop <- function(data, scales, null = .5, dist_sds = seq(-3.5, 3.5
 
 
 # 8. normal distribution mean and sds based on null and n
-compute_dnorm_prop_sds <- function(data, scales, null = .5,
-  dist_sds = -4:4){
+compute_dnorm_prop_sds <- function(data, scales, prob = .5, dist_sds = -4:4){
   
   n <- data |> nrow()
   
   n_max <- data |> dplyr::count(.by = x) |> dplyr::pull() |> max()
   
-  sd = sqrt(null * (1 - null)/n) # sd of the null distribution
+  sd = sqrt(prob * (1 - prob)/n) # sd of the null distribution
   
-  q <- dist_sds * sd + null
+  q <- dist_sds * sd + prob
   
   data.frame(x = q) |>
-    dplyr::mutate(height = dnorm(q, sd = sd, mean = null)) |>
+    dplyr::mutate(height = dnorm(q, sd = sd, mean = prob)) |>
     dplyr::mutate(height_max = dnorm(0, sd = sd, mean = 0)) |>
     dplyr::mutate(y = .5*n*height/height_max) |> # This is a bit fragile...
-    dplyr::mutate(xend = x,
-           yend = 0)
+    dplyr::mutate(xend = x, yend = 0)
 
 }  
 
@@ -66,7 +64,8 @@ compute_dbinom <- function(data, scales, prob = .5){
     mutate(x = num_successes/num_trials,
            y = num_trials/2*probability/max(probability),
            yend = 0,
-           xend = x) 
+           xend = x) |> 
+    mutate(unv)
   
 }
 
@@ -79,16 +78,20 @@ geom_binomial_null <- function(prob = .5, ...){
 }
 
 #' @export
-geom_normal_prop_null <- function(...){
-  qlayer(geom = qproto_update(ggplot2::GeomArea, ggplot2::aes(alpha = .2)),
+geom_normal_prop_null <- function(..., prob = .5){
+  qlayer(geom = qproto_update(ggplot2::GeomArea, 
+                              ggplot2::aes(alpha = .2)),
          stat = qstat_panel(compute_dnorm_prop), 
+         prob = prob, 
          ...)
   } 
 
 #' @export
-geom_normal_prop_null_sds <- function(...){
-   qlayer(geom = qproto_update(ggplot2::GeomSegment, ggplot2::aes(linetype = "dotted")),
+geom_normal_prop_null_sds <- function(..., prob = .5){
+   qlayer(geom = qproto_update(ggplot2::GeomSegment, 
+                               ggplot2::aes(linetype = "dotted")),
           stat = qstat_panel(compute_dnorm_prop_sds), 
+          prob = prob,
           ...)
   }
 

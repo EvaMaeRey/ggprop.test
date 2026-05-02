@@ -170,7 +170,7 @@ Goal for package functions?
 
 -   'Erogenomics'.\
 -   Trace a train of thought...
--   Approximate the wonderful analogue experience
+-   Approximate the wonderful analogue experience, isi storytelling
 
 ```{r}
 knitr::include_graphics("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*hZubBVjVDcl8ZixE-WRDvA.jpeg")
@@ -184,7 +184,7 @@ knitr::include_graphics("https://media.licdn.com/dms/image/v2/D5622AQEoFtfFtQr-G
 
 ------------------------------------------------------------------------
 
-# Back to exploring the prop test!! Yay!!
+# Enough wind up: Back to exploring the prop test
 
 {ggprop.test} can be installed as follows...
 
@@ -376,6 +376,12 @@ qstat <- function (compute_group = ggplot2::Stat$compute_group, ...)
 qstat_panel <- function (compute_panel, ...) 
 {
     ggplot2::ggproto(NULL, Stat, compute_panel = compute_panel, 
+        ...)
+}
+
+qstat_layer <- function (compute_layer, ...) 
+{
+    ggplot2::ggproto(NULL, Stat, compute_layer = compute_layer, 
         ...)
 }
 
@@ -995,6 +1001,213 @@ prop.test(x, n = n, p = .5)
 ```
 
 
+# *difference* in proportions?
+
+```{r}
+read_delim("https://www.isi-stats.com/isi/data/chap5/Gilbert.txt", "\t") |>
+  sample_frac(replace = F) |> 
+  janitor::clean_names() |> 
+  rename(outcome = patient) |> 
+  mutate(outcome = ifelse(outcome == "NoDeath", "Survived (1)", "Died (0)")) |>
+  mutate(gilbert_worked = ifelse(gilbert_worked == "No", "Didn't Work", "Worked")) ->
+data_hospital_nurse
+
+usethis::use_data(data_hospital_nurse, overwrite = T)
+```
+
+# Visualize raw data
+
+<details>
+
+```{r facet_align}
+facet_align <- function(var){
+  
+  facet_wrap(vars({{var}}), ncol = 1)
+  
+}
+```
+
+
+</details>
+
+
+
+```{r}
+data_hospital_nurse |> 
+  ggplot() + 
+  aes(x = outcome) + 
+  geom_support() +
+  geom_stack() + 
+  geom_prop() + 
+  geom_prop_label() + 
+  facet_align(gilbert_worked)
+```
+
+<details>
+
+
+```{r geom_prop_diff}
+compute_layer_diff_prop_segment <- function(data, ...){
+  
+  data |> 
+    summarise(prop = mean(x |> as.factor() |> as.numeric() -1),
+              .by = PANEL) |> 
+    select(prop, PANEL) |>
+    pivot_wider(values_from = prop, names_from = PANEL, names_prefix = "V") |>
+    rename(x = V1, xend = V2) |> 
+    mutate(y = 0, yend = 0) |> 
+    crossing(data.frame(PANEL = 1:2))
+  
+}
+
+
+compute_layer_diff_prop_segment_label <- function(data, ...){
+  
+  data |> 
+    summarise(prop = mean(x |> as.factor() |> as.numeric() -1),
+              .by = PANEL) |> 
+    select(prop, PANEL) |>
+    pivot_wider(values_from = prop, names_from = PANEL, names_prefix = "V") |>
+    rename(x = V1, xend = V2) |> 
+    mutate(y = 0, yend = 0) |> 
+    crossing(data.frame(PANEL = 1:2)) |> 
+    mutate(difference = c((x - xend)) |> round(2)) |>
+    mutate(label = paste0("Difference: \n", difference)) |> 
+    mutate(x = I(c(.2, -5)), y = I(.8)) |> # Not perfect...
+    mutate(alpha = c(0, 1))
+  
+}
+
+geom_prop_diff <- function(...){
+
+  qlayer(stat = compute_layer_diff_prop_segment |> qstat_layer(), 
+         geom = GeomSegment |> 
+           qproto_update(aes(color = from_theme(accent),
+                   linewidth = from_theme(linewidth*3))), 
+         ...)
+  
+}
+
+geom_prop_diff_label <- function(...){
+  
+    qlayer(
+      geom = GeomLabel |> qproto_update(aes(color = from_theme(accent))),
+      stat = compute_layer_diff_prop_segment_label |> qstat_layer(),
+      ...
+      ) 
+  
+}
+```
+
+
+</details>
+
+
+```{r}
+data_hospital_nurse |> 
+  ggplot() + 
+  aes(x = outcome) + 
+  geom_support() +
+  geom_stack() + 
+  geom_stack_label() +
+  geom_prop() + 
+  geom_prop_label() + 
+  facet_align(gilbert_worked) + 
+  geom_prop_diff() + 
+  geom_prop_diff_label()
+```
+
+
+# Interlude: What might have happened under the null (disassociation)
+
+
+<details>
+
+```{r, data_shuffle_var}
+data_shuffle_var <- function(data, var){
+  
+  data |> 
+    mutate(shuffled = sample({{var}}, replace = F))
+  
+}
+```
+
+</details>
+
+
+```{r}
+data_hospital_nurse |> 
+  data_shuffle_var(var = outcome) |> 
+  head()
+
+
+data_hospital_nurse |> 
+  data_shuffle_var(var = outcome) |>
+  ggplot() + 
+  aes(x = shuffled) + 
+  geom_stack() + 
+  geom_stack_label() +
+  facet_align(gilbert_worked) + 
+  geom_prop() + 
+  geom_prop_label() + 
+  geom_prop_diff() + 
+  geom_prop_diff_label()
+```
+
+
+
+#
+
+
+### Scenario 2: Yawning
+
+<details>
+
+```{r}
+data_yawning <- read_delim("https://www.isi-stats.com/isi/data/chap5/Yawning.txt", skip = 1) |> 
+  rename(treatment = Seeded, observed = Yawn) |>
+  mutate(observed = ifelse(observed == "Yawn", "Yawn (1)", "No Yawn (0)")) |>
+  sample_frac(replace = F)
+
+usethis::use_data(data_yawning, overwrite = T)
+```
+
+</details>
+
+
+```{r}
+data_yawning |> 
+  distinct()
+```
+
+
+<details>
+
+
+```{r}
+data_yawning |>
+  ggplot() + 
+  aes(x = observed) + 
+  geom_stack() +
+  geom_stack_label() +
+  geom_prop() + 
+  geom_prop_label() +
+  facet_align(treatment) + 
+  geom_prop_diff()
+```
+
+</details>
+
+
+# Just use prop test...
+
+
+```{r}
+data_hospital_nurse |>
+  table() |>
+  prop.test()
+
+```
 
 ------------------------------------------------------------------------
 
@@ -1009,6 +1222,9 @@ knitrExtra::chunk_to_dir("compute_prop_viz")
 knitrExtra::chunk_to_dir("gen_under_null")
 knitrExtra::chunk_to_dir("collections_null")
 knitrExtra::chunk_to_dir("create_prop_data")
+knitrExtra::chunk_to_dir("facet_align")
+knitrExtra::chunk_to_dir("geom_prop_diff")
+knitrExtra::chunk_to_dir("data_shuffle_var")
 ```
 
 ```{r, eval = F}

@@ -5,7 +5,7 @@ create_prop_data <- function(failure = "failure (0)",
                              num_success = 5, 
                              var_name = "outcome"){
   
-   outcome <-  c(failure, success) |> rep(c(num_failure, num_success)) |> sample()
+   outcome <-  c(failure, success) |> rep(c(num_failure, num_success)) |> sample() |> factor(levels = c(failure, success))
 
    tibble(outcome)
   

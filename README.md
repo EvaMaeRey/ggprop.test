@@ -10,8 +10,8 @@ ggprop.test
     friends.](#motivation-for-ggproptest-and-friends)
   - [An introductiong to packaging requirements via
     ggprop.test](#an-introductiong-to-packaging-requirements-via-ggproptest)
-- [Back to exploring the prop test!!
-  Yay!!](#back-to-exploring-the-prop-test-yay)
+- [Enough wind up: Back to exploring the prop
+  test](#enough-wind-up-back-to-exploring-the-prop-test)
 - [Data and Scenarios](#data-and-scenarios)
   - [scenario 1: organ donation](#scenario-1-organ-donation)
   - [scenario 2: dolphins](#scenario-2-dolphins)
@@ -28,6 +28,13 @@ ggprop.test
   - [Calculating the z-score by hand](#calculating-the-z-score-by-hand)
 - [Using prop.test to just do all this for me
   🙃🚀](#using-proptest-to-just-do-all-this-for-me-upside_down_facerocket)
+- [*difference* in proportions?](#difference-in-proportions)
+- [Visualize raw data](#visualize-raw-data)
+- [Interlude: What might have happened under the null
+  (disassociation)](#interlude-what-might-have-happened-under-the-null-disassociation)
+- [](#section)
+  - [Scenario 2: Yawning](#scenario-2-yawning)
+- [Just use prop test…](#just-use-prop-test)
 - [Minimal Packaging](#minimal-packaging)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -129,7 +136,10 @@ fs::dir_tree()
 #> │   ├── collections_null.R
 #> │   ├── compute_prop_viz.R
 #> │   ├── create_prop_data.R
+#> │   ├── data_shuffle_var.R
+#> │   ├── facet_align.R
 #> │   ├── gen_under_null.R
+#> │   ├── geom_prop_diff.R
 #> │   ├── raw_data_viz.R
 #> │   └── statexpress.R
 #> ├── README.Rmd
@@ -192,7 +202,12 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-21-2.png
 #> │       ├── unnamed-chunk-21-3.png
 #> │       ├── unnamed-chunk-22-1.png
+#> │       ├── unnamed-chunk-26-1.png
+#> │       ├── unnamed-chunk-27-1.png
+#> │       ├── unnamed-chunk-28-1.png
 #> │       ├── unnamed-chunk-3-1.png
+#> │       ├── unnamed-chunk-30-1.png
+#> │       ├── unnamed-chunk-31-1.png
 #> │       ├── unnamed-chunk-4-1.png
 #> │       ├── unnamed-chunk-4-2.png
 #> │       ├── unnamed-chunk-4-3.png
@@ -221,6 +236,8 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-9-7.png
 #> │       └── unnamed-chunk-9-8.png
 #> ├── data
+#> │   ├── data_hospital_nurse.rda
+#> │   ├── data_yawning.rda
 #> │   ├── dolphin_data.rda
 #> │   ├── donor_data.rda
 #> │   └── scissors_data.rda
@@ -232,7 +249,7 @@ Goal for package functions?
 
 - ‘Erogenomics’.  
 - Trace a train of thought…
-- Approximate the wonderful analogue experience
+- Approximate the wonderful analogue experience, isi storytelling
 
 ``` r
 knitr::include_graphics("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*hZubBVjVDcl8ZixE-WRDvA.jpeg")
@@ -258,7 +275,7 @@ knitr::include_graphics("https://media.licdn.com/dms/image/v2/D5622AQEoFtfFtQr-G
 
 ------------------------------------------------------------------------
 
-# Back to exploring the prop test!! Yay!!
+# Enough wind up: Back to exploring the prop test
 
 {ggprop.test} can be installed as follows…
 
@@ -546,6 +563,12 @@ qstat <- function (compute_group = ggplot2::Stat$compute_group, ...)
 qstat_panel <- function (compute_panel, ...) 
 {
     ggplot2::ggproto(NULL, Stat, compute_panel = compute_panel, 
+        ...)
+}
+
+qstat_layer <- function (compute_layer, ...) 
+{
+    ggplot2::ggproto(NULL, Stat, compute_layer = compute_layer, 
         ...)
 }
 
@@ -1289,6 +1312,231 @@ prop.test(x, n = n, p = .5)
 #> 0.6708075
 ```
 
+# *difference* in proportions?
+
+``` r
+read_delim("https://www.isi-stats.com/isi/data/chap5/Gilbert.txt", "\t") |>
+  sample_frac(replace = F) |> 
+  janitor::clean_names() |> 
+  rename(outcome = patient) |> 
+  mutate(outcome = ifelse(outcome == "NoDeath", "Survived (1)", "Died (0)")) |>
+  mutate(gilbert_worked = ifelse(gilbert_worked == "No", "Didn't Work", "Worked")) ->
+data_hospital_nurse
+
+usethis::use_data(data_hospital_nurse, overwrite = T)
+```
+
+# Visualize raw data
+
+<details>
+
+``` r
+facet_align <- function(var){
+  
+  facet_wrap(vars({{var}}), ncol = 1)
+  
+}
+```
+
+</details>
+
+``` r
+data_hospital_nurse |> 
+  ggplot() + 
+  aes(x = outcome) + 
+  geom_support() +
+  geom_stack() + 
+  geom_prop() + 
+  geom_prop_label() + 
+  facet_align(gilbert_worked)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+
+<details>
+
+``` r
+compute_layer_diff_prop_segment <- function(data, ...){
+  
+  data |> 
+    summarise(prop = mean(x |> as.factor() |> as.numeric() -1),
+              .by = PANEL) |> 
+    select(prop, PANEL) |>
+    pivot_wider(values_from = prop, names_from = PANEL, names_prefix = "V") |>
+    rename(x = V1, xend = V2) |> 
+    mutate(y = 0, yend = 0) |> 
+    crossing(data.frame(PANEL = 1:2))
+  
+}
+
+
+compute_layer_diff_prop_segment_label <- function(data, ...){
+  
+  data |> 
+    summarise(prop = mean(x |> as.factor() |> as.numeric() -1),
+              .by = PANEL) |> 
+    select(prop, PANEL) |>
+    pivot_wider(values_from = prop, names_from = PANEL, names_prefix = "V") |>
+    rename(x = V1, xend = V2) |> 
+    mutate(y = 0, yend = 0) |> 
+    crossing(data.frame(PANEL = 1:2)) |> 
+    mutate(difference = c((x - xend)) |> round(2)) |>
+    mutate(label = paste0("Difference: \n", difference)) |> 
+    mutate(x = I(c(.2, -5)), y = I(.8)) |> # Not perfect...
+    mutate(alpha = c(0, 1))
+  
+}
+
+geom_prop_diff <- function(...){
+
+  qlayer(stat = compute_layer_diff_prop_segment |> qstat_layer(), 
+         geom = GeomSegment |> 
+           qproto_update(aes(color = from_theme(accent),
+                   linewidth = from_theme(linewidth*3))), 
+         ...)
+  
+}
+
+geom_prop_diff_label <- function(...){
+  
+    qlayer(
+      geom = GeomLabel |> qproto_update(aes(color = from_theme(accent))),
+      stat = compute_layer_diff_prop_segment_label |> qstat_layer(),
+      ...
+      ) 
+  
+}
+```
+
+</details>
+
+``` r
+data_hospital_nurse |> 
+  ggplot() + 
+  aes(x = outcome) + 
+  geom_support() +
+  geom_stack() + 
+  geom_stack_label() +
+  geom_prop() + 
+  geom_prop_label() + 
+  facet_align(gilbert_worked) + 
+  geom_prop_diff() + 
+  geom_prop_diff_label()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+
+# Interlude: What might have happened under the null (disassociation)
+
+<details>
+
+``` r
+data_shuffle_var <- function(data, var){
+  
+  data |> 
+    mutate(shuffled = sample({{var}}, replace = F))
+  
+}
+```
+
+</details>
+
+``` r
+data_hospital_nurse |> 
+  data_shuffle_var(var = outcome) |> 
+  head()
+#> # A tibble: 6 × 3
+#>   gilbert_worked outcome      shuffled    
+#>   <chr>          <chr>        <chr>       
+#> 1 Didn't Work    Survived (1) Survived (1)
+#> 2 Didn't Work    Survived (1) Survived (1)
+#> 3 Worked         Survived (1) Survived (1)
+#> 4 Didn't Work    Survived (1) Survived (1)
+#> 5 Didn't Work    Survived (1) Survived (1)
+#> 6 Worked         Died (0)     Survived (1)
+
+
+data_hospital_nurse |> 
+  data_shuffle_var(var = outcome) |>
+  ggplot() + 
+  aes(x = shuffled) + 
+  geom_stack() + 
+  geom_stack_label() +
+  facet_align(gilbert_worked) + 
+  geom_prop() + 
+  geom_prop_label() + 
+  geom_prop_diff() + 
+  geom_prop_diff_label()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+
+# 
+
+### Scenario 2: Yawning
+
+<details>
+
+``` r
+data_yawning <- read_delim("https://www.isi-stats.com/isi/data/chap5/Yawning.txt", skip = 1) |> 
+  rename(treatment = Seeded, observed = Yawn) |>
+  mutate(observed = ifelse(observed == "Yawn", "Yawn (1)", "No Yawn (0)")) |>
+  sample_frac(replace = F)
+
+usethis::use_data(data_yawning, overwrite = T)
+```
+
+</details>
+
+``` r
+data_yawning |> 
+  distinct()
+#> # A tibble: 4 × 2
+#>   treatment observed   
+#>   <chr>     <chr>      
+#> 1 Control   No Yawn (0)
+#> 2 Seeded    No Yawn (0)
+#> 3 Seeded    Yawn (1)   
+#> 4 Control   Yawn (1)
+```
+
+<details>
+
+``` r
+data_yawning |>
+  ggplot() + 
+  aes(x = observed) + 
+  geom_stack() +
+  geom_stack_label() +
+  geom_prop() + 
+  geom_prop_label() +
+  facet_align(treatment) + 
+  geom_prop_diff()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+
+</details>
+
+# Just use prop test…
+
+``` r
+data_hospital_nurse |>
+  table() |>
+  prop.test()
+#> 
+#>  2-sample test for equality of proportions with continuity correction
+#> 
+#> data:  table(data_hospital_nurse)
+#> X-squared = 83.464, df = 1, p-value < 2.2e-16
+#> alternative hypothesis: two.sided
+#> 95 percent confidence interval:
+#>  -0.17844732 -0.08370378
+#> sample estimates:
+#>     prop 1     prop 2 
+#> 0.02456647 0.15564202
+```
+
 ------------------------------------------------------------------------
 
 # Minimal Packaging
@@ -1302,6 +1550,9 @@ knitrExtra::chunk_to_dir("compute_prop_viz")
 knitrExtra::chunk_to_dir("gen_under_null")
 knitrExtra::chunk_to_dir("collections_null")
 knitrExtra::chunk_to_dir("create_prop_data")
+knitrExtra::chunk_to_dir("facet_align")
+knitrExtra::chunk_to_dir("geom_prop_diff")
+knitrExtra::chunk_to_dir("data_shuffle_var")
 ```
 
 ``` r
