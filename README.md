@@ -36,6 +36,7 @@ ggprop.test
 - [](#section)
   - [Scenario 2: Yawning](#scenario-2-yawning)
 - [Just use prop test…](#just-use-prop-test)
+- [equation for z, two-sample](#equation-for-z-two-sample)
 - [Minimal Packaging](#minimal-packaging)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -1102,8 +1103,7 @@ compute_dbinom <- function(data, scales, prob = .5){
     mutate(x = num_successes/num_trials,
            y = num_trials/2*probability/max(probability),
            yend = 0,
-           xend = x) |> 
-    mutate(unv)
+           xend = x)
   
 }
 
@@ -1539,6 +1539,24 @@ data_hospital_nurse |>
 #> sample estimates:
 #>     prop 1     prop 2 
 #> 0.02456647 0.15564202
+```
+
+# equation for z, two-sample
+
+``` r
+#' @export
+stamp_eq_norm_prop <- function(x = I(.125),
+    y = I(.8), ...){
+  
+  ggplot2::annotate(
+    "text",
+    x = x,
+    y = y,
+    label = latex2exp::TeX("sd = \\sqrt{\\frac{p*(1-p)}{n}}", output = "character"),
+    parse = TRUE, ...
+  )
+
+}
 ```
 
 ------------------------------------------------------------------------

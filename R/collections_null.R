@@ -64,8 +64,7 @@ compute_dbinom <- function(data, scales, prob = .5){
     mutate(x = num_successes/num_trials,
            y = num_trials/2*probability/max(probability),
            yend = 0,
-           xend = x) |> 
-    mutate(unv)
+           xend = x)
   
 }
 
