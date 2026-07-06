@@ -36,7 +36,6 @@ ggprop.test
 - [](#section)
   - [Scenario 2: Yawning](#scenario-2-yawning)
 - [Just use prop test…](#just-use-prop-test)
-- [equation for z, two-sample](#equation-for-z-two-sample)
 - [Minimal Packaging](#minimal-packaging)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -47,12 +46,12 @@ library(ggprop.test)
 
 ## Where we are headed (what ggprop.test delivers)
 
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-3-1.png)<!-- -->
 
 If we discuss each of the snapshot points, we could write something like
 this:
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-4-1.png)<!-- -->
 
 ## {ggprop.test} is teaching ‘mvp’ (minimum viable package) that translates the visual logic of the prop test to ggplot2.
 
@@ -210,6 +209,7 @@ fs::dir_tree()
 #> │       ├── unnamed-chunk-3-1.png
 #> │       ├── unnamed-chunk-30-1.png
 #> │       ├── unnamed-chunk-31-1.png
+#> │       ├── unnamed-chunk-32-1.png
 #> │       ├── unnamed-chunk-4-1.png
 #> │       ├── unnamed-chunk-4-2.png
 #> │       ├── unnamed-chunk-4-3.png
@@ -243,8 +243,34 @@ fs::dir_tree()
 #> │   ├── dolphin_data.rda
 #> │   ├── donor_data.rda
 #> │   └── scissors_data.rda
+#> ├── docs
+#> │   ├── 404.html
+#> │   ├── articles
+#> │   ├── authors.html
+#> │   ├── bootstrap-toc.css
+#> │   ├── bootstrap-toc.js
+#> │   ├── docsearch.css
+#> │   ├── docsearch.js
+#> │   ├── index.html
+#> │   ├── link.svg
+#> │   ├── news
+#> │   ├── pkgdown.css
+#> │   ├── pkgdown.js
+#> │   ├── pkgdown.yml
+#> │   ├── reference
+#> │   │   └── index.html
+#> │   ├── sitemap.xml
+#> │   └── tutorials
 #> ├── ggprop.test.Rproj
 #> └── man
+#>     └── figures
+#>         ├── README-test_interlude-1.png
+#>         ├── README-test_interlude-2.png
+#>         ├── README-test_interlude-3.png
+#>         ├── README-test_interlude-4.png
+#>         ├── README-test_interlude-5.png
+#>         ├── README-unnamed-chunk-3-1.png
+#>         └── README-unnamed-chunk-4-1.png
 ```
 
 Goal for package functions?
@@ -531,7 +557,7 @@ kissing_data |>
   geom_normal_prop_null_sds()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
 
 ------------------------------------------------------------------------
 
@@ -669,7 +695,7 @@ donor_data |>
   geom_support()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
 
@@ -684,7 +710,7 @@ dolphin_data |>
   geom_support()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-17-2.png)<!-- -->
 
 ``` r
 
@@ -698,7 +724,7 @@ scissors_data |>
   geom_support()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-17-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-17-3.png)<!-- -->
 
 ``` r
 
@@ -841,7 +867,7 @@ donor_base_plot +
   stamp_prop_label()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 
@@ -854,7 +880,7 @@ dolphins_base_plot +
   stamp_prop_label()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-18-2.png)<!-- -->
 
 ``` r
 
@@ -867,7 +893,7 @@ scissors_base_plot +
   stamp_prop_label(.33)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-18-3.png)<!-- -->
 
 ``` r
 
@@ -985,7 +1011,7 @@ dolphin_data |>
   stamp_prop_label(.94)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
   
@@ -1002,7 +1028,7 @@ donor_data |>
   stamp_prop_label(.67)  
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-19-2.png)<!-- -->
 
 ``` r
 
@@ -1019,7 +1045,7 @@ scissors_data |>
   stamp_prop_label(.25)  
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-19-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-19-3.png)<!-- -->
 
 ------------------------------------------------------------------------
 
@@ -1110,8 +1136,9 @@ compute_dbinom <- function(data, scales, prob = .5){
 #' @export
 geom_binomial_null <- function(prob = .5, ...){
   
-  qlayer(geom = GeomSegment,
-         stat = qstat_panel(compute_dbinom), prob = prob, ...)
+  qlayer(geom = GeomSegment |> qproto_update(aes(alpha = .35)),
+         stat = qstat_panel(compute_dbinom), 
+         prob = prob, ...)
 
 }
 
@@ -1147,7 +1174,7 @@ stamp_eq_norm_prop <- function(x = I(.125),
     "text",
     x = x,
     y = y,
-    label = latex2exp::TeX("sd = \\sqrt{\\frac{p*(1-p)}{n}}", output = "character"),
+    label = latex2exp::TeX("sd = \\sqrt{\\frac{\\pi*(1-\\pi)}{n}}", output = "character"),
     parse = TRUE, ...
   )
 
@@ -1162,7 +1189,7 @@ dolphins_balance_plot +
   geom_binomial_null()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 
@@ -1197,7 +1224,7 @@ donors_balance_plot +
   geom_binomial_null()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
 ``` r
 
@@ -1208,7 +1235,7 @@ donors_balance_plot +
   stamp_eq_norm_prop()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-2.png)<!-- -->
 
 ``` r
 
@@ -1219,7 +1246,7 @@ scissors_balance_plot +
   geom_binomial_null(prob = .333)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-3.png)<!-- -->
 
 ``` r
 
@@ -1255,7 +1282,7 @@ donor_data |>
   stamp_eq_norm_prop()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
 
 ## Calculating the z-score by hand
 
@@ -1352,7 +1379,7 @@ data_hospital_nurse |>
   facet_align(gilbert_worked)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-26-1.png)<!-- -->
 
 <details>
 
@@ -1428,17 +1455,18 @@ data_hospital_nurse |>
   geom_prop_diff_label()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-27-1.png)<!-- -->
 
 # Interlude: What might have happened under the null (disassociation)
 
 <details>
 
 ``` r
+#' @export
 data_shuffle_var <- function(data, var){
   
   data |> 
-    mutate(shuffled = sample({{var}}, replace = F))
+    dplyr::mutate(shuffled = sample({{var}}, replace = F))
   
 }
 ```
@@ -1473,7 +1501,7 @@ data_hospital_nurse |>
   geom_prop_diff_label()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-28-1.png)<!-- -->
 
 # 
 
@@ -1518,9 +1546,103 @@ data_yawning |>
   geom_prop_diff()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-31-1.png)<!-- -->
+
+``` r
+
+plot_yawn_diffs <- last_plot() 
+```
 
 </details>
+
+``` r
+
+compute_panel_diff_normalized <- function(data, scales){
+  
+  data |> 
+    summarise(prop = outcome |> as.factor() |> 
+             as.numeric() |> mean(), 
+           .by = sample) |> 
+    summarise(diff_prop = max(prop) - min(prop)) |> 
+    mutate(group = 1, PANEL = 1) |> 
+    mutate(x = diff_prop, y = 0) |> 
+    mutate(label = x |> round(2))
+  
+}
+
+# data_yawning |> 
+#   rename()
+
+
+#' @export
+stamp_prop_diff_limits <- function(..., num_sds = 2){annotate(geom = "segment", x = 1, xend = -1, y = 0, yend = 0 )}
+
+#' @export
+geom_prop_diff_normalized <- function(...){qlayer(geom = GeomText |> qproto_update(aes(vjust = 1, size = 6, color = from_theme(accent))),
+         stat = qstat_panel(compute_panel_diff_normalized),
+         label = "^", ...)}
+
+#' @export
+geom_prop_diff_normalized_label <- function(...){qlayer(geom = GeomLabel |> qproto_update(aes(vjust = 0, size = 4, color = from_theme(accent))), 
+         stat = qstat_panel(compute_panel_diff_normalized),...)} 
+
+#' @export
+stamp_no_diff <- function(...){  annotate("text", y = 0, 
+            label = "^", x = 0,
+            vjust = 1, size = 6, ...) }
+
+#' @export
+stamp_no_diff_label <- function(...){annotate("label", y = 0, 
+            x = 0, label = 0,
+            vjust = 0, size = 4, ...)}
+
+#' @export
+stamp_eq_norm_prop_two_sample <- function(x = I(.125),
+    y = I(.8), ...){
+  
+  ggplot2::annotate(
+    "text",
+    x = x,
+    y = y,
+    label = latex2exp::TeX(
+      "SE = \\sqrt{\\frac{\\hat{p}_1*(1-\\hat{p}_1)}{n_1} + \\frac{\\hat{p}_2*(1-\\hat{p}_2)}{n_2}}", output = "character"),
+    parse = TRUE, ...
+  )
+
+}
+```
+
+``` r
+data_yawning |> 
+  ggplot() + 
+  aes(outcome = observed, sample = treatment) + 
+  stamp_prop_diff_limits() + 
+  geom_prop_diff_normalized() + 
+  geom_prop_diff_normalized_label() + 
+  stamp_no_diff() + 
+  stamp_no_diff_label() + 
+  stamp_eq_norm_prop_two_sample() 
+```
+
+![](man/figures/README-unnamed-chunk-32-1.png)<!-- -->
+
+``` r
+
+
+data_hospital_nurse |> 
+  ggplot() + 
+  aes(outcome = outcome, sample = gilbert_worked) + 
+  stamp_prop_diff_limits() + 
+  geom_prop_diff_normalized() + 
+  geom_prop_diff_normalized_label() + 
+  stamp_no_diff() + 
+  stamp_no_diff_label() + 
+  stamp_eq_norm_prop_two_sample() 
+```
+
+![](man/figures/README-unnamed-chunk-32-2.png)<!-- -->
+
+$$SE = \sqrt{\frac{\hat{p}_1*(1-\hat{p}_1)}{n_1} + \frac{\hat{p}_2*(1-\hat{p}_2)}{n_2}}$$
 
 # Just use prop test…
 
@@ -1539,24 +1661,21 @@ data_hospital_nurse |>
 #> sample estimates:
 #>     prop 1     prop 2 
 #> 0.02456647 0.15564202
-```
 
-# equation for z, two-sample
-
-``` r
-#' @export
-stamp_eq_norm_prop <- function(x = I(.125),
-    y = I(.8), ...){
-  
-  ggplot2::annotate(
-    "text",
-    x = x,
-    y = y,
-    label = latex2exp::TeX("sd = \\sqrt{\\frac{p*(1-p)}{n}}", output = "character"),
-    parse = TRUE, ...
-  )
-
-}
+data_yawning |>
+  table() |>
+  prop.test()
+#> 
+#>  2-sample test for equality of proportions with continuity correction
+#> 
+#> data:  table(data_yawning)
+#> X-squared = 0.26418, df = 1, p-value = 0.6073
+#> alternative hypothesis: two.sided
+#> 95 percent confidence interval:
+#>  -0.1781809  0.4092415
+#> sample estimates:
+#>    prop 1    prop 2 
+#> 0.8125000 0.6969697
 ```
 
 ------------------------------------------------------------------------

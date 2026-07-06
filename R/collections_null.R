@@ -71,8 +71,9 @@ compute_dbinom <- function(data, scales, prob = .5){
 #' @export
 geom_binomial_null <- function(prob = .5, ...){
   
-  qlayer(geom = GeomSegment,
-         stat = qstat_panel(compute_dbinom), prob = prob, ...)
+  qlayer(geom = GeomSegment |> qproto_update(aes(alpha = .35)),
+         stat = qstat_panel(compute_dbinom), 
+         prob = prob, ...)
 
 }
 
@@ -108,7 +109,7 @@ stamp_eq_norm_prop <- function(x = I(.125),
     "text",
     x = x,
     y = y,
-    label = latex2exp::TeX("sd = \\sqrt{\\frac{p*(1-p)}{n}}", output = "character"),
+    label = latex2exp::TeX("sd = \\sqrt{\\frac{\\pi*(1-\\pi)}{n}}", output = "character"),
     parse = TRUE, ...
   )
 
