@@ -44,22 +44,18 @@ compute_panel_prop_asserted_label <- function(data, scales, value = .5){
 
 
 
-scale_x_prop <- function(...){
-
-  scale_x_discrete(palette = scales::pal_manual(0:1), ...)
-
-}
-
 #' @export
 geom_prop <- function(...){
+  
   list(
-  qlayer(geom = qproto_update(ggplot2::GeomText, 
+  .layers = qlayer(geom = qproto_update(ggplot2::GeomText, 
                               ggplot2::aes(size = 6, vjust = 1,
                                            color = ggplot2::from_theme(colour %||% accent))),
          stat = qstat_panel(compute_xmean_at_y0),
          ...),
-  scale_x_prop()
+  .scales = scale_x_prop()
   )
+  
   }
 
 #' @export

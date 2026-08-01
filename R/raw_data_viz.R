@@ -1,3 +1,10 @@
+scale_x_prop <- function(...){
+
+  scale_x_discrete(palette = scales::pal_manual(0:1), drop = FALSE, ...)
+
+}
+
+
 # 1. layer stack of bricks
 compute_group_bricks <- function(data, scales, width = .2){
   
@@ -23,12 +30,10 @@ compute_group_count <- function(data, scales){
 # 3. layer add x span
 compute_balance <- function(data, scales){
   
-  data |> 
-    dplyr::summarise(min_x = min(x),
-              xend = max(x),
-              y = 0,
-              yend = 0) |> 
-    dplyr::rename(x = min_x)
+  tibble(x = 0,
+         xend = 1,
+         y = 0,
+         yend = 0)
   
 }
 
@@ -36,21 +41,35 @@ compute_balance <- function(data, scales){
 
 #' @export
 geom_stack <- function(...){
+  
+  list(
+    
   qlayer(geom = qproto_update(ggplot2::GeomTile, ggplot2::aes(color = "white")), 
          stat = qstat(compute_group_bricks), 
-         ...)
+         ...),
+  scale_x_prop()
+
+  ) 
+  
   } 
 
 #' @export
 geom_stack_label <- function(...){
-  qlayer(geom = qproto_update(ggplot2::GeomText, ggplot2::aes(vjust = 0)), 
+  
+    list(
+      qlayer(geom = qproto_update(ggplot2::GeomText, ggplot2::aes(vjust = 0)), 
          stat = qstat(compute_group_count), 
-         ...)
+         ...),
+      scale_x_prop()
+      )
+  
   } 
 
 #' @export
 geom_support <- function(...){
+  list(
   qlayer(geom = ggplot2::GeomSegment, 
          stat = qstat_panel(compute_balance), 
          ...)
+  )
   }

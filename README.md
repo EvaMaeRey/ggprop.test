@@ -53,6 +53,12 @@ this:
 
 ![](man/figures/README-unnamed-chunk-4-1.png)<!-- -->
 
+``` r
+last_plot() & ggchalkboard:::theme_whiteboard(base_size = 14, paper = "white") 
+```
+
+![](man/figures/README-unnamed-chunk-5-1.png)<!-- -->
+
 ## {ggprop.test} is teaching ‘mvp’ (minimum viable package) that translates the visual logic of the prop test to ggplot2.
 
 ### Motivation for ggproptest and friends.
@@ -258,19 +264,86 @@ fs::dir_tree()
 #> │   ├── pkgdown.js
 #> │   ├── pkgdown.yml
 #> │   ├── reference
+#> │   │   ├── figures
+#> │   │   │   ├── README-test_interlude-1.png
+#> │   │   │   ├── README-test_interlude-2.png
+#> │   │   │   ├── README-test_interlude-3.png
+#> │   │   │   ├── README-test_interlude-4.png
+#> │   │   │   ├── README-test_interlude-5.png
+#> │   │   │   ├── README-unnamed-chunk-16-1.png
+#> │   │   │   ├── README-unnamed-chunk-17-1.png
+#> │   │   │   ├── README-unnamed-chunk-17-2.png
+#> │   │   │   ├── README-unnamed-chunk-17-3.png
+#> │   │   │   ├── README-unnamed-chunk-18-1.png
+#> │   │   │   ├── README-unnamed-chunk-18-2.png
+#> │   │   │   ├── README-unnamed-chunk-18-3.png
+#> │   │   │   ├── README-unnamed-chunk-19-1.png
+#> │   │   │   ├── README-unnamed-chunk-19-2.png
+#> │   │   │   ├── README-unnamed-chunk-19-3.png
+#> │   │   │   ├── README-unnamed-chunk-20-1.png
+#> │   │   │   ├── README-unnamed-chunk-21-1.png
+#> │   │   │   ├── README-unnamed-chunk-21-2.png
+#> │   │   │   ├── README-unnamed-chunk-21-3.png
+#> │   │   │   ├── README-unnamed-chunk-22-1.png
+#> │   │   │   ├── README-unnamed-chunk-26-1.png
+#> │   │   │   ├── README-unnamed-chunk-27-1.png
+#> │   │   │   ├── README-unnamed-chunk-28-1.png
+#> │   │   │   ├── README-unnamed-chunk-3-1.png
+#> │   │   │   ├── README-unnamed-chunk-31-1.png
+#> │   │   │   ├── README-unnamed-chunk-32-1.png
+#> │   │   │   ├── README-unnamed-chunk-32-2.png
+#> │   │   │   └── README-unnamed-chunk-4-1.png
 #> │   │   └── index.html
 #> │   ├── sitemap.xml
 #> │   └── tutorials
 #> ├── ggprop.test.Rproj
-#> └── man
-#>     └── figures
-#>         ├── README-test_interlude-1.png
-#>         ├── README-test_interlude-2.png
-#>         ├── README-test_interlude-3.png
-#>         ├── README-test_interlude-4.png
-#>         ├── README-test_interlude-5.png
-#>         ├── README-unnamed-chunk-3-1.png
-#>         └── README-unnamed-chunk-4-1.png
+#> ├── man
+#> │   └── figures
+#> │       ├── README-test_interlude-1.png
+#> │       ├── README-test_interlude-2.png
+#> │       ├── README-test_interlude-3.png
+#> │       ├── README-test_interlude-4.png
+#> │       ├── README-test_interlude-5.png
+#> │       ├── README-unnamed-chunk-16-1.png
+#> │       ├── README-unnamed-chunk-17-1.png
+#> │       ├── README-unnamed-chunk-17-2.png
+#> │       ├── README-unnamed-chunk-17-3.png
+#> │       ├── README-unnamed-chunk-18-1.png
+#> │       ├── README-unnamed-chunk-18-2.png
+#> │       ├── README-unnamed-chunk-18-3.png
+#> │       ├── README-unnamed-chunk-19-1.png
+#> │       ├── README-unnamed-chunk-19-2.png
+#> │       ├── README-unnamed-chunk-19-3.png
+#> │       ├── README-unnamed-chunk-20-1.png
+#> │       ├── README-unnamed-chunk-20-2.png
+#> │       ├── README-unnamed-chunk-20-3.png
+#> │       ├── README-unnamed-chunk-21-1.png
+#> │       ├── README-unnamed-chunk-21-2.png
+#> │       ├── README-unnamed-chunk-21-3.png
+#> │       ├── README-unnamed-chunk-22-1.png
+#> │       ├── README-unnamed-chunk-22-2.png
+#> │       ├── README-unnamed-chunk-22-3.png
+#> │       ├── README-unnamed-chunk-23-1.png
+#> │       ├── README-unnamed-chunk-23-2.png
+#> │       ├── README-unnamed-chunk-23-3.png
+#> │       ├── README-unnamed-chunk-24-1.png
+#> │       ├── README-unnamed-chunk-26-1.png
+#> │       ├── README-unnamed-chunk-27-1.png
+#> │       ├── README-unnamed-chunk-28-1.png
+#> │       ├── README-unnamed-chunk-29-1.png
+#> │       ├── README-unnamed-chunk-3-1.png
+#> │       ├── README-unnamed-chunk-30-1.png
+#> │       ├── README-unnamed-chunk-31-1.png
+#> │       ├── README-unnamed-chunk-32-1.png
+#> │       ├── README-unnamed-chunk-32-2.png
+#> │       ├── README-unnamed-chunk-33-1.png
+#> │       ├── README-unnamed-chunk-33-2.png
+#> │       ├── README-unnamed-chunk-34-1.png
+#> │       ├── README-unnamed-chunk-34-2.png
+#> │       ├── README-unnamed-chunk-4-1.png
+#> │       ├── README-unnamed-chunk-4-2.png
+#> │       └── README-unnamed-chunk-5-1.png
+#> └── test.pdf
 ```
 
 Goal for package functions?
@@ -557,7 +630,25 @@ kissing_data |>
   geom_normal_prop_null_sds()
 ```
 
-![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+create_prop_data(failure = "incorrect",
+                 success = "correct",
+                 num_failure = 0,
+                 num_success = 6
+                ) |> 
+  ggplot() + 
+  labs(title = "EAPOST Curry College, Day 1, Bot or Not") + 
+  aes(x = outcome) + 
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop()
+```
+
+![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
 
 ------------------------------------------------------------------------
 
@@ -621,6 +712,13 @@ qproto_update <- function (`_inherit`, default_aes_update = NULL, ...)
 #### And then define the functions…
 
 ``` r
+scale_x_prop <- function(...){
+
+  scale_x_discrete(palette = scales::pal_manual(0:1), drop = FALSE, ...)
+
+}
+
+
 # 1. layer stack of bricks
 compute_group_bricks <- function(data, scales, width = .2){
   
@@ -646,12 +744,10 @@ compute_group_count <- function(data, scales){
 # 3. layer add x span
 compute_balance <- function(data, scales){
   
-  data |> 
-    dplyr::summarise(min_x = min(x),
-              xend = max(x),
-              y = 0,
-              yend = 0) |> 
-    dplyr::rename(x = min_x)
+  tibble(x = 0,
+         xend = 1,
+         y = 0,
+         yend = 0)
   
 }
 
@@ -659,23 +755,37 @@ compute_balance <- function(data, scales){
 
 #' @export
 geom_stack <- function(...){
+  
+  list(
+    
   qlayer(geom = qproto_update(ggplot2::GeomTile, ggplot2::aes(color = "white")), 
          stat = qstat(compute_group_bricks), 
-         ...)
+         ...),
+  scale_x_prop()
+
+  ) 
+  
   } 
 
 #' @export
 geom_stack_label <- function(...){
-  qlayer(geom = qproto_update(ggplot2::GeomText, ggplot2::aes(vjust = 0)), 
+  
+    list(
+      qlayer(geom = qproto_update(ggplot2::GeomText, ggplot2::aes(vjust = 0)), 
          stat = qstat(compute_group_count), 
-         ...)
+         ...),
+      scale_x_prop()
+      )
+  
   } 
 
 #' @export
 geom_support <- function(...){
+  list(
   qlayer(geom = ggplot2::GeomSegment, 
          stat = qstat_panel(compute_balance), 
          ...)
+  )
   }
 ```
 
@@ -695,7 +805,7 @@ donor_data |>
   geom_support()
 ```
 
-![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 
@@ -710,7 +820,7 @@ dolphin_data |>
   geom_support()
 ```
 
-![](man/figures/README-unnamed-chunk-17-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-19-2.png)<!-- -->
 
 ``` r
 
@@ -724,7 +834,7 @@ scissors_data |>
   geom_support()
 ```
 
-![](man/figures/README-unnamed-chunk-17-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-19-3.png)<!-- -->
 
 ``` r
 
@@ -782,22 +892,18 @@ compute_panel_prop_asserted_label <- function(data, scales, value = .5){
 
 
 
-scale_x_prop <- function(...){
-
-  scale_x_discrete(palette = scales::pal_manual(0:1), ...)
-
-}
-
 #' @export
 geom_prop <- function(...){
+  
   list(
-  qlayer(geom = qproto_update(ggplot2::GeomText, 
+  .layers = qlayer(geom = qproto_update(ggplot2::GeomText, 
                               ggplot2::aes(size = 6, vjust = 1,
                                            color = ggplot2::from_theme(colour %||% accent))),
          stat = qstat_panel(compute_xmean_at_y0),
          ...),
-  scale_x_prop()
+  .scales = scale_x_prop()
   )
+  
   }
 
 #' @export
@@ -867,7 +973,7 @@ donor_base_plot +
   stamp_prop_label()
 ```
 
-![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 
@@ -880,7 +986,7 @@ dolphins_base_plot +
   stamp_prop_label()
 ```
 
-![](man/figures/README-unnamed-chunk-18-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-20-2.png)<!-- -->
 
 ``` r
 
@@ -893,7 +999,7 @@ scissors_base_plot +
   stamp_prop_label(.33)
 ```
 
-![](man/figures/README-unnamed-chunk-18-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-20-3.png)<!-- -->
 
 ``` r
 
@@ -985,19 +1091,19 @@ dolphin_data |>
 #>  1 Correct (1)     Not Correct (0)
 #>  2 Correct (1)     Not Correct (0)
 #>  3 Correct (1)     Correct (1)    
-#>  4 Correct (1)     Not Correct (0)
-#>  5 Correct (1)     Not Correct (0)
-#>  6 Not Correct (0) Not Correct (0)
-#>  7 Correct (1)     Not Correct (0)
-#>  8 Correct (1)     Correct (1)    
-#>  9 Correct (1)     Not Correct (0)
+#>  4 Correct (1)     Correct (1)    
+#>  5 Correct (1)     Correct (1)    
+#>  6 Not Correct (0) Correct (1)    
+#>  7 Correct (1)     Correct (1)    
+#>  8 Correct (1)     Not Correct (0)
+#>  9 Correct (1)     Correct (1)    
 #> 10 Correct (1)     Correct (1)    
-#> 11 Correct (1)     Not Correct (0)
-#> 12 Correct (1)     Not Correct (0)
-#> 13 Correct (1)     Not Correct (0)
-#> 14 Correct (1)     Correct (1)    
+#> 11 Correct (1)     Correct (1)    
+#> 12 Correct (1)     Correct (1)    
+#> 13 Correct (1)     Correct (1)    
+#> 14 Correct (1)     Not Correct (0)
 #> 15 Correct (1)     Correct (1)    
-#> 16 Correct (1)     Correct (1)
+#> 16 Correct (1)     Not Correct (0)
 
 dolphin_data |> 
   mutate(synth = to_synthetic(observed)) |>
@@ -1011,7 +1117,7 @@ dolphin_data |>
   stamp_prop_label(.94)
 ```
 
-![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
 ``` r
   
@@ -1028,7 +1134,7 @@ donor_data |>
   stamp_prop_label(.67)  
 ```
 
-![](man/figures/README-unnamed-chunk-19-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-2.png)<!-- -->
 
 ``` r
 
@@ -1045,7 +1151,7 @@ scissors_data |>
   stamp_prop_label(.25)  
 ```
 
-![](man/figures/README-unnamed-chunk-19-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-3.png)<!-- -->
 
 ------------------------------------------------------------------------
 
@@ -1189,7 +1295,7 @@ dolphins_balance_plot +
   geom_binomial_null()
 ```
 
-![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
 
 ``` r
 
@@ -1224,7 +1330,7 @@ donors_balance_plot +
   geom_binomial_null()
 ```
 
-![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-23-1.png)<!-- -->
 
 ``` r
 
@@ -1235,7 +1341,7 @@ donors_balance_plot +
   stamp_eq_norm_prop()
 ```
 
-![](man/figures/README-unnamed-chunk-21-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-23-2.png)<!-- -->
 
 ``` r
 
@@ -1246,7 +1352,7 @@ scissors_balance_plot +
   geom_binomial_null(prob = .333)
 ```
 
-![](man/figures/README-unnamed-chunk-21-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-23-3.png)<!-- -->
 
 ``` r
 
@@ -1282,7 +1388,7 @@ donor_data |>
   stamp_eq_norm_prop()
 ```
 
-![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-24-1.png)<!-- -->
 
 ## Calculating the z-score by hand
 
@@ -1379,7 +1485,7 @@ data_hospital_nurse |>
   facet_align(gilbert_worked)
 ```
 
-![](man/figures/README-unnamed-chunk-26-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-28-1.png)<!-- -->
 
 <details>
 
@@ -1455,7 +1561,7 @@ data_hospital_nurse |>
   geom_prop_diff_label()
 ```
 
-![](man/figures/README-unnamed-chunk-27-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-29-1.png)<!-- -->
 
 # Interlude: What might have happened under the null (disassociation)
 
@@ -1482,10 +1588,10 @@ data_hospital_nurse |>
 #>   <chr>          <chr>        <chr>       
 #> 1 Didn't Work    Survived (1) Survived (1)
 #> 2 Didn't Work    Survived (1) Survived (1)
-#> 3 Worked         Survived (1) Survived (1)
+#> 3 Didn't Work    Survived (1) Survived (1)
 #> 4 Didn't Work    Survived (1) Survived (1)
-#> 5 Didn't Work    Survived (1) Survived (1)
-#> 6 Worked         Died (0)     Survived (1)
+#> 5 Didn't Work    Survived (1) Died (0)    
+#> 6 Worked         Survived (1) Survived (1)
 
 
 data_hospital_nurse |> 
@@ -1501,7 +1607,7 @@ data_hospital_nurse |>
   geom_prop_diff_label()
 ```
 
-![](man/figures/README-unnamed-chunk-28-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-30-1.png)<!-- -->
 
 # 
 
@@ -1526,10 +1632,10 @@ data_yawning |>
 #> # A tibble: 4 × 2
 #>   treatment observed   
 #>   <chr>     <chr>      
-#> 1 Control   No Yawn (0)
-#> 2 Seeded    No Yawn (0)
-#> 3 Seeded    Yawn (1)   
-#> 4 Control   Yawn (1)
+#> 1 Seeded    No Yawn (0)
+#> 2 Seeded    Yawn (1)   
+#> 3 Control   Yawn (1)   
+#> 4 Control   No Yawn (0)
 ```
 
 <details>
@@ -1546,7 +1652,7 @@ data_yawning |>
   geom_prop_diff()
 ```
 
-![](man/figures/README-unnamed-chunk-31-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-33-1.png)<!-- -->
 
 ``` r
 
@@ -1624,7 +1730,7 @@ data_yawning |>
   stamp_eq_norm_prop_two_sample() 
 ```
 
-![](man/figures/README-unnamed-chunk-32-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-34-1.png)<!-- -->
 
 ``` r
 
@@ -1640,7 +1746,7 @@ data_hospital_nurse |>
   stamp_eq_norm_prop_two_sample() 
 ```
 
-![](man/figures/README-unnamed-chunk-32-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-34-2.png)<!-- -->
 
 $$SE = \sqrt{\frac{\hat{p}_1*(1-\hat{p}_1)}{n_1} + \frac{\hat{p}_2*(1-\hat{p}_2)}{n_2}}$$
 

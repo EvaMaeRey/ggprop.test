@@ -2,6 +2,7 @@
 
 export(create_prop_data)
 export(data_add_synth)
+export(data_shuffle_var)
 export(geom_binomial_null)
 export(geom_normal_prop_null)
 export(geom_normal_prop_null_sds)

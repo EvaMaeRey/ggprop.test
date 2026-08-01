@@ -70,6 +70,11 @@ library(patchwork)
   ggchalkboard:::theme_chalkboard(base_size = 14) 
 ```
 
+
+```{r, fig.width=10, fig.height=14}
+last_plot() & ggchalkboard:::theme_whiteboard(base_size = 14, paper = "white") 
+```
+
 ```{r test_interlude, include = F}
 # and the interlude...
 donor_data |>
@@ -347,6 +352,28 @@ kissing_data |>
   geom_normal_prop_null_sds()
 ```
 
+
+
+```{r}
+create_prop_data(failure = "incorrect",
+                 success = "correct",
+                 num_failure = 0,
+                 num_success = 6
+                ) |> 
+  ggplot() + 
+  labs(title = "EAPOST Curry College, Day 1, Bot or Not") + 
+  aes(x = outcome) + 
+  geom_stack() + 
+  geom_stack_label() + 
+  geom_prop() + 
+  geom_prop_label() + 
+  stamp_prop()
+
+
+
+```
+
+
 ------------------------------------------------------------------------
 
 # Visualizing raw data
@@ -408,6 +435,13 @@ qproto_update <- function (`_inherit`, default_aes_update = NULL, ...)
 #### And then define the functions...
 
 ```{r raw_data_viz, echo = T, message = F, warning=F}
+scale_x_prop <- function(...){
+
+  scale_x_discrete(palette = scales::pal_manual(0:1), drop = FALSE, ...)
+
+}
+
+
 # 1. layer stack of bricks
 compute_group_bricks <- function(data, scales, width = .2){
   
@@ -433,12 +467,10 @@ compute_group_count <- function(data, scales){
 # 3. layer add x span
 compute_balance <- function(data, scales){
   
-  data |> 
-    dplyr::summarise(min_x = min(x),
-              xend = max(x),
-              y = 0,
-              yend = 0) |> 
-    dplyr::rename(x = min_x)
+  tibble(x = 0,
+         xend = 1,
+         y = 0,
+         yend = 0)
   
 }
 
@@ -446,23 +478,37 @@ compute_balance <- function(data, scales){
 
 #' @export
 geom_stack <- function(...){
+  
+  list(
+    
   qlayer(geom = qproto_update(ggplot2::GeomTile, ggplot2::aes(color = "white")), 
          stat = qstat(compute_group_bricks), 
-         ...)
+         ...),
+  scale_x_prop()
+
+  ) 
+  
   } 
 
 #' @export
 geom_stack_label <- function(...){
-  qlayer(geom = qproto_update(ggplot2::GeomText, ggplot2::aes(vjust = 0)), 
+  
+    list(
+      qlayer(geom = qproto_update(ggplot2::GeomText, ggplot2::aes(vjust = 0)), 
          stat = qstat(compute_group_count), 
-         ...)
+         ...),
+      scale_x_prop()
+      )
+  
   } 
 
 #' @export
 geom_support <- function(...){
+  list(
   qlayer(geom = ggplot2::GeomSegment, 
          stat = qstat_panel(compute_balance), 
          ...)
+  )
   }
 ```
 
@@ -554,22 +600,18 @@ compute_panel_prop_asserted_label <- function(data, scales, value = .5){
 
 
 
-scale_x_prop <- function(...){
-
-  scale_x_discrete(palette = scales::pal_manual(0:1), ...)
-
-}
-
 #' @export
 geom_prop <- function(...){
+  
   list(
-  qlayer(geom = qproto_update(ggplot2::GeomText, 
+  .layers = qlayer(geom = qproto_update(ggplot2::GeomText, 
                               ggplot2::aes(size = 6, vjust = 1,
                                            color = ggplot2::from_theme(colour %||% accent))),
          stat = qstat_panel(compute_xmean_at_y0),
          ...),
-  scale_x_prop()
+  .scales = scale_x_prop()
   )
+  
   }
 
 #' @export

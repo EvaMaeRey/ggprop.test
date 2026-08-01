@@ -1,6 +1,7 @@
+#' @export
 data_shuffle_var <- function(data, var){
   
   data |> 
-    mutate(shuffled = sample({{var}}, replace = F))
+    dplyr::mutate(shuffled = sample({{var}}, replace = F))
   
 }
